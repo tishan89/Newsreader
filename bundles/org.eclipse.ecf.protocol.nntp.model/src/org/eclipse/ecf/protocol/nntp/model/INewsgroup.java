@@ -26,6 +26,8 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 
 	public final String POSTING_PERMITTED_MODERATED = "m";
 
+	
+	public int getLowWaterMark();
 	/**
 	 * This method is used to get the number of the first article in the group.
 	 * The server can report a non existing article number as the first article
@@ -37,8 +39,9 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 * @param newLowestNumber
 	 *            the new lowest number
 	 */
-	public int getLowWaterMark();
 
+	
+	public int getHighWaterMark();
 	/**
 	 * This method is used get the last article in the group. The server can
 	 * report a non existing article number as the last article due to the
@@ -49,8 +52,9 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 * @param newLowestNumber
 	 *            the new lowest number
 	 */
-	public int getHighWaterMark();
 
+	
+	public int getArticleCount();
 	/**
 	 * This method is used to get the total number of articles in the group. RFC
 	 * 977 states that this number might not be correct (due to articles being
@@ -61,7 +65,6 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 * @param newLowestNumber
 	 *            the new lowest number
 	 */
-	public int getArticleCount();
 
 	public String getCreatedBy();
 
