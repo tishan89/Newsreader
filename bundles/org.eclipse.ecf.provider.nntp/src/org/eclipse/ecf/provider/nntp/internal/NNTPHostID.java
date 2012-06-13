@@ -15,7 +15,7 @@ public class NNTPHostID extends BaseID {
 
 	private final String URI;
 
-	public NNTPHostID(Namespace namespace, String URI)
+	public NNTPHostID(NNTPNameSpace namespace, String URI)
 			throws URISyntaxException {
 
 		super(namespace);
@@ -49,26 +49,30 @@ public class NNTPHostID extends BaseID {
 			return false;
 		}
 		final NNTPHostID other = (NNTPHostID) o;
-		// Get resources from this and other
-		String thisResourceName = getResourceName();
-		String otherResourceName = other.getResourceName();
-
-		// The resources are considered equal if either one is null (not known
-		// yet), or they are equal by
-		// string comparison
-		boolean resourceEquals = false;
-		if (thisResourceName == null) {
-			resourceEquals = (otherResourceName == null) ? true : false;
-		} else {
-			resourceEquals = thisResourceName.equals(otherResourceName);
-		}
-		return false;
+//		// Get resources from this and other
+//		String thisResourceName = getResourceName();
+//		String otherResourceName = other.getResourceName();
+//
+//		// The resources are considered equal if either one is null (not known
+//		// yet), or they are equal by
+//		// string comparison
+//		boolean resourceEquals = false;
+//		if (thisResourceName == null) {
+//			resourceEquals = (otherResourceName == null) ? true : false;
+//		} else {
+//			resourceEquals = thisResourceName.equals(otherResourceName);
+//		}
+//		return false;
+		if(other.URI.startsWith("nntp://")){
+			return true;
+		}else
+			return false;
 	}
 
-	private String getResourceName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	private String getResourceName() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	/*
 	 * (non-Javadoc)
