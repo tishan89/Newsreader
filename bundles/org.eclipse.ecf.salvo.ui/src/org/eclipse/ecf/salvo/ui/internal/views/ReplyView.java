@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.MimeArticleContentHandler;
@@ -165,7 +165,7 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 
 		monitor.subTask("Posting to newsgroup " + article.getNewsgroup().getNewsgroupName());
 		monitor.worked(1);
-		IServerStoreFacade serverStoreFacade = ServerStoreFactory.instance().getServerStoreFacade();
+		INNTPServerStoreFacade serverStoreFacade = ServerStoreFactory.instance().getServerStoreFacade();
 		monitor.worked(1);
 
 		try {

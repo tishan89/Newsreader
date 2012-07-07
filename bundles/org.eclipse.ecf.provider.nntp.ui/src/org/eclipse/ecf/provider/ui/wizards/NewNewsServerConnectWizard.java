@@ -9,7 +9,7 @@ import org.eclipse.ecf.core.identity.IDCreateException;
 import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.security.ConnectContextFactory;
 import org.eclipse.ecf.core.security.IConnectContext;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.provider.nntp.NNTPServerContainer;
 import org.eclipse.ecf.salvo.ui.wizards.NewNewsServerWizard;
@@ -34,7 +34,7 @@ public class NewNewsServerConnectWizard extends NewNewsServerWizard implements
 		// TODO Auto-generated constructor stub
 	}
 
-	public NewNewsServerConnectWizard(IServer server) {
+	public NewNewsServerConnectWizard(INNTPServer server) {
 		super(server);
 		// TODO Auto-generated constructor stub
 	}

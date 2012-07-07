@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.external.provider.HookedNewsgroupProvider;
 import org.eclipse.ecf.salvo.ui.external.provider.INewsGroupProvider;
@@ -324,7 +324,7 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 		subscribedNewsgroups = new ArrayList<INewsgroup>();
 
 		try {
-			for (IServer server : ServerStoreFactory.instance()
+			for (INNTPServer server : ServerStoreFactory.instance()
 					.getServerStoreFacade().getFirstStore().getServers()) {
 
 				INewsgroup[] groups = ServerStoreFactory.instance()

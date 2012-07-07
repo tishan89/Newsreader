@@ -20,14 +20,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.NNTPConnectException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
@@ -36,7 +36,7 @@ import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.model.TimeoutException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
-public class ServerConnection implements IServerConnection {
+public class ServerConnection implements INNTPServerConnection {
 
 	private Socket socket;
 
@@ -46,7 +46,7 @@ public class ServerConnection implements IServerConnection {
 
 	private boolean possibleResponseAvailable;
 
-	private IServer server;
+	private INNTPServer server;
 
 	private static final int TIMEOUTSECONDS = 10;
 
@@ -61,7 +61,7 @@ public class ServerConnection implements IServerConnection {
 
 	private int batchSize;
 
-	public ServerConnection(IServer server) {
+	public ServerConnection(INNTPServer server) {
 		this.server = server;
 		server.setServerConnection(this);
 	}
@@ -260,7 +260,7 @@ public class ServerConnection implements IServerConnection {
 		this.possibleResponseAvailable = possibleResponseAvailable;
 	}
 
-	public IServer getServer() {
+	public INNTPServer getServer() {
 		return server;
 	}
 
@@ -345,7 +345,7 @@ public class ServerConnection implements IServerConnection {
 		}
 	}
 
-	public void setModeReader(IServer server) throws NNTPIOException,
+	public void setModeReader(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException {
 		sendCommand("mode reader");
 
@@ -357,7 +357,7 @@ public class ServerConnection implements IServerConnection {
 
 	}
 
-	public INewsgroup[] listNewsgroups(IServer server) throws NNTPIOException,
+	public INewsgroup[] listNewsgroups(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException {
 
 		sendCommand("list newsgroups");
@@ -462,7 +462,7 @@ public class ServerConnection implements IServerConnection {
 		return (IArticle[]) reversed.toArray(new IArticle[reversed.size()]);
 	}
 
-	public String[] getOverviewHeaders(IServer server) throws NNTPIOException,
+	public String[] getOverviewHeaders(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException {
 
 		/*
@@ -739,7 +739,7 @@ public class ServerConnection implements IServerConnection {
 		return null;
 	}
 
-	public INewsgroup[] listNewsgroups(IServer server, Date since)
+	public INewsgroup[] listNewsgroups(INNTPServer server, Date since)
 			throws NNTPIOException, UnexpectedResponseException {
 		// TODO Auto-generated method stub
 		return null;

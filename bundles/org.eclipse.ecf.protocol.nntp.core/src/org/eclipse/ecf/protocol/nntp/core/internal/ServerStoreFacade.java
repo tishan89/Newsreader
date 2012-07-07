@@ -21,16 +21,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.core.ArticleEventListnersFactory;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPConnectException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
@@ -39,7 +41,7 @@ import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
-public class ServerStoreFacade implements IServerStoreFacade {
+public class ServerStoreFacade implements INNTPServerStoreFacade {
 
 	public ServerStoreFacade() {
 	}
@@ -48,7 +50,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		// startUpdateThread();
 	}
 
-	public IStore[] getStores() {
+	public INNTPStore[] getStores() {
 		return StoreStore.instance().getStores();
 	}
 
@@ -103,14 +105,14 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		//updateAttributes(group);
 	}
 
-	public void subscribeServer(IServer server, String passWord)
+	public void subscribeServer(INNTPServer server, String passWord)
 			throws StoreException {
 		for (int i = 0; i < getStores().length; i++) {
 			getStores()[i].subscribeServer(server, passWord);
 		}
 	}
 
-	public void unsubscribeServer(IServer server, boolean permanent)
+	public void unsubscribeServer(INNTPServer server, boolean permanent)
 			throws StoreException {
 		for (int i = 0; i < getStores().length; i++) {
 			getStores()[i].unsubscribeServer(server, permanent);
@@ -137,7 +139,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 	}
 	
 
-	public INewsgroup[] getSubscribedNewsgroups(IServer server)
+	public INewsgroup[] getSubscribedNewsgroups(INNTPServer server)
 			throws StoreException {
 		for (int i = 0; i < getStores().length;) {
 			return getStores()[i].getSubscribedNewsgroups(server);
@@ -230,7 +232,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 			throws NNTPIOException, UnexpectedResponseException, StoreException {
 
 		try {
-			IServerConnection connection = newsgroup.getServer()
+			INNTPServerConnection connection = newsgroup.getServer()
 					.getServerConnection();
 
 			// Adjust for sanity
@@ -238,7 +240,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 				from = to - SALVO.BATCH_SIZE;
 
 			// Check what is first in store
-			IStore firstStore = getFirstStore();
+			INNTPStore firstStore = getFirstStore();
 			int firstArticleInStore = 0;
 			if (firstStore != null
 					&& firstStore.getFirstArticle(newsgroup) != null)
@@ -311,7 +313,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		}
 	}
 
-	public IStore getFirstStore() {
+	public INNTPStore getFirstStore() {
 		if (getStores().length > 0)
 			return getStores()[0];
 		return null;
@@ -430,7 +432,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 			String body) throws NNTPIOException, StoreException {
 
 		try {
-			IServerConnection connection = newsgroups[0].getServer()
+			INNTPServerConnection connection = newsgroups[0].getServer()
 					.getServerConnection();
 			connection.postNewArticle(newsgroups, subject, body);
 			for (int i = 0; i < newsgroups.length; i++) {
@@ -443,12 +445,12 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		}
 	}
 
-	public INewsgroup[] listNewsgroups(IServer server) throws NNTPIOException,
+	public INewsgroup[] listNewsgroups(INNTPServer server) throws NNTPIOException,
 			NNTPIOException, UnexpectedResponseException {
 		return server.getServerConnection().listNewsgroups(server);
 	}
 
-	public INewsgroup[] listNewsgroups(IServer server, Date since)
+	public INewsgroup[] listNewsgroups(INNTPServer server, Date since)
 			throws NNTPIOException, UnexpectedResponseException {
 
 		// FIXME implement
@@ -483,21 +485,21 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		}
 	}
 
-	public String[] getOverviewHeaders(IServer server) throws NNTPIOException,
+	public String[] getOverviewHeaders(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException {
 		return server.getServerConnection().getOverviewHeaders(server);
 	}
 
-	public void setModeReader(IServer server) throws NNTPIOException,
+	public void setModeReader(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException {
 		setModeReader(server);
 	}
 
-	public IServer[] getServers() throws NNTPException {
+	public INNTPServer[] getServers() throws NNTPException {
 		return getStores()[0].getServers();
 	}
 
-	public INewsgroup getSubscribedNewsgroup(IServer server, String newsgroup) {
+	public INewsgroup getSubscribedNewsgroup(INNTPServer server, String newsgroup) {
 		// FIXME implement
 		throw new RuntimeException("not yet implemented");
 	}
@@ -519,7 +521,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 			throw new NNTPException("Error parsing URL " + URL, e);
 		}
 
-		IServer[] servers = getServers();
+		INNTPServer[] servers = getServers();
 		for (int i = 0; i < servers.length; i++) {
 			if (servers[i].getAddress().equals(server)) {
 				INewsgroup[] groups = getSubscribedNewsgroups(servers[i]);
@@ -535,7 +537,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 	}
 
 	public int purge(Calendar purgeDate, int number) throws NNTPIOException {
-		IStore[] stores = getStores();
+		INNTPStore[] stores = getStores();
 		int result = 0;
 		if (stores.length > 0)
 			result = stores[0].purge(purgeDate, number);
@@ -546,7 +548,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 	}
 
 	public int delete(IArticle article) throws NNTPIOException {
-		IStore[] stores = getStores();
+		INNTPStore[] stores = getStores();
 		int result = 0;
 		if (stores.length > 0)
 			result = stores[0].delete(article);
@@ -565,7 +567,7 @@ public class ServerStoreFacade implements IServerStoreFacade {
 		return orderArticlesFromNewestFirst (getFirstStore().getMarkedArticles(newsgroup));
 	}
 
-	public IArticle[] getAllMarkedArticles(IServer server) {
+	public IArticle[] getAllMarkedArticles(INNTPServer server) {
 		return orderArticlesFromNewestFirst (getFirstStore().getAllMarkedArticles(server));
 	}
 
@@ -680,6 +682,34 @@ public class ServerStoreFacade implements IServerStoreFacade {
 				ArticleEventListnersFactory.instance().getRegistry().fireEvent(new ArticleEvent(articles,true));
 			}
 		} 
+		
+	}
+
+	public void catchUp(IMessageSource source) throws Exception {
+		catchUp((INewsgroup)source);
+		
+	}
+
+	public void updateMessage(IMessage message) throws Exception {
+		updateArticle((IArticle)message);		
+	}
+
+	public IMessage getMessageByMsgId(IMessageSource source, String msgId) {
+		
+		return getArticleByMsgId((INewsgroup)source, msgId);
+	}
+
+	public IMessage getFirstMessageOfTread(IMessage message) {
+		return getFirstArticleOfTread((IArticle)message);
+	}
+
+	public IMessage[] orderMessagesesFromNewestFirst(IMessage[] messages) {
+			return orderArticlesFromNewestFirst((IArticle[])messages);
+	}
+
+	public void syncStoreWithServer(IMessageSource messageSource,
+			boolean isNewMessagePosted) throws Exception {
+		syncStoreWithServer((INewsgroup)messageSource, isNewMessagePosted);
 		
 	}
 

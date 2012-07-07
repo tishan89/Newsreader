@@ -21,10 +21,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 
@@ -36,9 +36,9 @@ public class ServerDAO {
 	private final Connection connection;
 	private PreparedStatement deleteServer;
 	private PreparedStatement getSubscribedServer;
-	private final IStore store;
+	private final INNTPStore store;
 
-	public ServerDAO(Connection connection, IStore store) throws StoreException {
+	public ServerDAO(Connection connection, INNTPStore store) throws StoreException {
 		this.connection = connection;
 		this.store = store;
 		prepareStatements();
@@ -77,25 +77,25 @@ public class ServerDAO {
 
 	}
 
-	public IServer[] getServer(String url) throws StoreException {
+	public INNTPServer[] getServer(String url) throws StoreException {
 		try {
 			getServer.setString(1, url);
 			getServer.execute();
 			ResultSet r = getServer.getResultSet();
 			if (r == null)
-				return new IServer[0];
+				return new INNTPServer[0];
 
 			ArrayList result = new ArrayList();
 
 			while (r.next()) {
-				IServer server = ServerFactory.getCreateServer(getAddress(r),
+				INNTPServer server = ServerFactory.getCreateServer(getAddress(r),
 						getPort(r), getCredentials(r), getSecure(r));
 				server.setSubscribed(getSubscribed(r));
 				result.add(server);
 
 			}
 			r.close();
-			return (IServer[]) result.toArray(new IServer[0]);
+			return (INNTPServer[]) result.toArray(new INNTPServer[0]);
 
 		} catch (Exception e) {
 			throw new StoreException(e.getMessage(), e);
@@ -149,7 +149,7 @@ public class ServerDAO {
 		return r.getString(1).replace("nntp://", "").split(":")[0];
 	}
 
-	public void insertServer(IServer server) throws StoreException {
+	public void insertServer(INNTPServer server) throws StoreException {
 
 		try {
 			deleteServer(server);
@@ -174,7 +174,7 @@ public class ServerDAO {
 		}
 	}
 
-	public void updateServer(IServer server) throws StoreException {
+	public void updateServer(INNTPServer server) throws StoreException {
 		try {
 			updateServer.setString(1, server.getURL());
 			updateServer.setInt(2, server.getPort());
@@ -193,7 +193,7 @@ public class ServerDAO {
 		}
 	}
 
-	public void deleteServer(IServer server) throws StoreException {
+	public void deleteServer(INNTPServer server) throws StoreException {
 		try {
 			deleteServer.setString(1, server.getURL());
 			deleteServer.execute();
@@ -211,7 +211,7 @@ public class ServerDAO {
 	 * @return the array of servers, never null
 	 * @throws NNTPException
 	 */
-	public IServer[] getServers(boolean subscribed) throws NNTPException {
+	public INNTPServer[] getServers(boolean subscribed) throws NNTPException {
 
 		synchronized (connection) {
 			try {
@@ -219,19 +219,19 @@ public class ServerDAO {
 				getSubscribedServer.execute();
 				ResultSet r = getSubscribedServer.getResultSet();
 				if (r == null)
-					return new IServer[0];
+					return new INNTPServer[0];
 
 				ArrayList result = new ArrayList();
 
 				while (r.next()) {
-					IServer server = ServerFactory.getCreateServer(
+					INNTPServer server = ServerFactory.getCreateServer(
 							getAddress(r), getPort(r), getCredentials(r),
 							getSecure(r));
 					server.setSubscribed(subscribed);
 					result.add(server);
 				}
 				r.close();
-				return (IServer[]) result.toArray(new IServer[0]);
+				return (INNTPServer[]) result.toArray(new INNTPServer[0]);
 
 			} catch (SQLException e) {
 				throw new StoreException(e.getMessage(), e);

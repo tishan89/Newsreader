@@ -15,7 +15,7 @@ import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 
 
@@ -35,14 +35,14 @@ public class ResourcePropertyTester extends PropertyTester {
 			if (property.equals("isNewsgroup") && resource.getObject() instanceof INewsgroup)
 				return true;
 
-			if (property.equals("isServer") && resource.getObject() instanceof IServer)
+			if (property.equals("isServer") && resource.getObject() instanceof INNTPServer)
 				return true;
 
 			if (property.equals("isArticle") && resource.getObject() instanceof IArticle)
 				return true;
 
 			if (property.equals("isSubscribable")
-					&& (resource.getObject() instanceof INewsgroup || resource.getObject() instanceof IServer))
+					&& (resource.getObject() instanceof INewsgroup || resource.getObject() instanceof INNTPServer))
 				return true;
 
 			if (property.equals("hasNewsgroup")

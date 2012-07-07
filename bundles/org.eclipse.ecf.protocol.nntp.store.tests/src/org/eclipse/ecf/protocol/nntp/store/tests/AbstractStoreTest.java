@@ -22,16 +22,16 @@ import java.util.HashMap;
 
 import junit.framework.Assert;
 
+import org.eclipse.ecf.channel.model.ICredentials;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
@@ -73,7 +73,7 @@ public abstract class AbstractStoreTest {
 			"Date:", "Message-ID:", "References:", "Bytes:", "Lines:",
 			"Xref:full" };
 
-	private IStore store;
+	private INNTPStore store;
 
 	private static HashMap<IStoreEvent, Integer> listenserCounter;
 
@@ -165,7 +165,7 @@ public abstract class AbstractStoreTest {
 			}
 		};
 
-		IServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
+		INNTPServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
 				credentials, true);
 		getStore().subscribeServer(server, "flinder1f7");
 
@@ -447,7 +447,7 @@ public abstract class AbstractStoreTest {
 
 		testSubscribeNewsgroup();
 		assertTrue(getStore().getServers().length == 1);
-		IServer server = getStore().getServers()[0];
+		INNTPServer server = getStore().getServers()[0];
 		assertTrue(getStore().getSubscribedNewsgroups(server).length == 1);
 		getStore().unsubscribeServer(getStore().getServers()[0], false);
 		assertTrue(getStore().getServers().length == 1);
@@ -480,11 +480,11 @@ public abstract class AbstractStoreTest {
 		assertTrue("" + i, i == 1);
 	}
 
-	public void setStore(IStore store) {
+	public void setStore(INNTPStore store) {
 		this.store = store;
 	}
 
-	public IStore getStore() {
+	public INNTPStore getStore() {
 		return store;
 	}
 

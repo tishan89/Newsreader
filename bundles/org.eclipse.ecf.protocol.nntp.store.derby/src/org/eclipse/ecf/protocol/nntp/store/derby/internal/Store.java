@@ -22,21 +22,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.model.ISecureStore;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
+import org.eclipse.ecf.channel.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPConnectException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
-import org.eclipse.ecf.protocol.nntp.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 
 /**
@@ -46,7 +48,7 @@ import org.eclipse.ecf.protocol.nntp.model.StoreException;
  * @author Wim Jongman
  * 
  */
-public class Store implements IStore {
+public class Store implements INNTPStore {
 
 	/**
 	 * Stores the last exception.
@@ -110,7 +112,7 @@ public class Store implements IStore {
 		}
 	}
 
-	public void subscribeServer(final IServer server, final String passWord)
+	public void subscribeServer(final INNTPServer server, final String passWord)
 			throws StoreException {
 		getSecureStore().put(server.getAddress(), passWord, true);
 		server.setSubscribed(true);
@@ -225,7 +227,7 @@ public class Store implements IStore {
 		}
 	}
 
-	public void unsubscribeServer(IServer server, boolean permanent)
+	public void unsubscribeServer(INNTPServer server, boolean permanent)
 			throws StoreException {
 		if (permanent) {
 			serverDOA.deleteServer(server);
@@ -252,7 +254,7 @@ public class Store implements IStore {
 		}
 	}
 
-	public INewsgroup[] getSubscribedNewsgroups(IServer server)
+	public INewsgroup[] getSubscribedNewsgroups(INNTPServer server)
 			throws StoreException {
 		return groupDOA.getSubscribedNewsgroups(server, true);
 	}
@@ -263,10 +265,10 @@ public class Store implements IStore {
 		fireEvent(new StoreEvent(newsgroup, SALVO.EVENT_CHANGE_GROUP));
 	}
 
-	public IServer[] getServers() throws NNTPException {
-		IServer[] subsc = serverDOA.getServers(true);
-		IServer[] unsubsc = serverDOA.getServers(false);
-		IServer[] result = new IServer[subsc.length + unsubsc.length];
+	public INNTPServer[] getServers() throws NNTPException {
+		INNTPServer[] subsc = serverDOA.getServers(true);
+		INNTPServer[] unsubsc = serverDOA.getServers(false);
+		INNTPServer[] result = new INNTPServer[subsc.length + unsubsc.length];
 		int counter = 0;
 		for (int i = 0; i < subsc.length; i++) {
 			result[counter++] = subsc[i];
@@ -379,7 +381,7 @@ public class Store implements IStore {
 		String groupName = StringUtils.split(
 				StringUtils.split(URL, "&article")[0], "=")[1];
 		String serverURL = StringUtils.split(URL, "/?group")[0];
-		IServer server = serverDOA.getServer(serverURL)[0];
+		INNTPServer server = serverDOA.getServer(serverURL)[0];
 		INewsgroup group = groupDOA.getNewsgroup(server, groupName)[0];
 		return articleDOA.getArticle(group, URL);
 
@@ -390,7 +392,7 @@ public class Store implements IStore {
 		int result = 0;
 
 		try {
-			IServer[] servers = getServers();
+			INNTPServer[] servers = getServers();
 			for (int i = 0; i < servers.length; i++) {
 				INewsgroup[] groups = getSubscribedNewsgroups(servers[i]);
 
@@ -509,7 +511,7 @@ public class Store implements IStore {
 	 * 
 	 * @return marked articles for all newsgroups
 	 */
-	public IArticle[] getAllMarkedArticles(IServer server) {
+	public IArticle[] getAllMarkedArticles(INNTPServer server) {
 
 		try {
 			INewsgroup[] newsgroups = getSubscribedNewsgroups(server);
@@ -551,6 +553,42 @@ public class Store implements IStore {
 		}
 		return null;
 		
+	}
+	
+	//Redirecting methods inherited from IStore
+
+	
+	public void storeMessage(IMessage[] messages)throws Exception {
+		//if(messages.){
+		storeArticles((IArticle[])messages);
+		
+		
+	}
+
+	
+	public void storeMessageBody(IMessage message, String[] body)
+			throws Exception {
+
+		storeArticleBody((IArticle) message, body);
+
+	}
+
+	
+	public void updateMessage(IMessage message) throws Exception {
+		updateArticle((IArticle) message);
+		
+	}
+
+	
+	public IMessage getMessageByMsgId(IMessageSource source, String msgId) {
+		
+		return getArticleByMsgId((INewsgroup)source, msgId);
+	}
+
+	
+	public IMessage getMessageByMsgId(String msgId) {
+		//not related to context
+		return null;
 	}
 	
 }

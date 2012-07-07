@@ -12,16 +12,16 @@
 package org.eclipse.ecf.protocol.nntp.core;
 
 import org.eclipse.ecf.protocol.nntp.core.internal.ServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 
 
 public class ServerStoreFactory {
 
 	private static ServerStoreFactory factory;
 
-	private IServerStoreFacade facade;
+	private INNTPServerStoreFacade facade;
 
-	public IServerStoreFacade getServerStoreFacade() {
+	public INNTPServerStoreFacade getServerStoreFacade() {
 		
 		if (facade == null) {
 			facade = new ServerStoreFacade();

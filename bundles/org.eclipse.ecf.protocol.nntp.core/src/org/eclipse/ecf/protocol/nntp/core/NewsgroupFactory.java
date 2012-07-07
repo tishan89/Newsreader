@@ -17,12 +17,12 @@ import java.io.ObjectInputStream;
 
 import org.eclipse.ecf.protocol.nntp.core.internal.Newsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 
 
 public class NewsgroupFactory {
 
-	public static INewsgroup createNewsGroup(IServer server, String newsgroup,
+	public static INewsgroup createNewsGroup(INNTPServer server, String newsgroup,
 			String description) {
 		return new Newsgroup(server, newsgroup, description);
 	}

@@ -17,8 +17,8 @@ import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
@@ -36,7 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 class ThisUserArticlesContentProvider implements ILazyTreeContentProvider {
 
 	private TreeViewer viewer;
-	private IServerStoreFacade serverStoreFacade;
+	private INNTPServerStoreFacade serverStoreFacade;
 	private INewsgroup[] newsgroups;
 	
 
@@ -50,14 +50,14 @@ class ThisUserArticlesContentProvider implements ILazyTreeContentProvider {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		newsgroups = getNotEmptyNewsgroups((IServer) newInput);
+		newsgroups = getNotEmptyNewsgroups((INNTPServer) newInput);
 	}
 	
 	/**
 	 * Get not empty newsgroups
 	 * @return not empty newsgroups
 	 */
-	private INewsgroup[] getNotEmptyNewsgroups(IServer server){
+	private INewsgroup[] getNotEmptyNewsgroups(INNTPServer server){
 		
 		ArrayList<INewsgroup> result = new ArrayList<INewsgroup>(); 
 		
@@ -109,7 +109,7 @@ class ThisUserArticlesContentProvider implements ILazyTreeContentProvider {
 			length = (serverStoreFacade
 					.getFirstArticleOfThisUserThreads((INewsgroup) element)).length;
 
-		} else if (element instanceof IServer) {
+		} else if (element instanceof INNTPServer) {
 
 			length = newsgroups.length;
 
@@ -132,7 +132,7 @@ class ThisUserArticlesContentProvider implements ILazyTreeContentProvider {
 	 */
 	public void updateElement(Object parent, int index) {
 
-		if (parent instanceof IServer) {
+		if (parent instanceof INNTPServer) {
 
 			INewsgroup newsgroup = newsgroups[index];
 			viewer.replace(parent, index, newsgroup);

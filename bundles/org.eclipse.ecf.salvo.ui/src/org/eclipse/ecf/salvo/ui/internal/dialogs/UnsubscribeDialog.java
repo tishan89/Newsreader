@@ -12,7 +12,7 @@
 package org.eclipse.ecf.salvo.ui.internal.dialogs;
 
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -45,7 +45,7 @@ public class UnsubscribeDialog extends MessageDialog {
 			return super.createCustomArea(parent);
 	}
 
-	public static void openConfirm(IServer object, Shell activeShell,
+	public static void openConfirm(INNTPServer object, Shell activeShell,
 			String address, String string) {
 		isServer = true;
 		

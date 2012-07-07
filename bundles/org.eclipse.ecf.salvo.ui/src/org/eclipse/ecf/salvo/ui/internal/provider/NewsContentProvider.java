@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.internal.provider;
 
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;

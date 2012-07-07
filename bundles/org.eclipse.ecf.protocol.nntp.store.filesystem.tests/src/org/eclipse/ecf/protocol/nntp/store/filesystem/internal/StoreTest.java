@@ -17,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
-import org.eclipse.ecf.protocol.nntp.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.channel.model.ISecureStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.protocol.nntp.store.filesystem.StoreFactory;
 import org.eclipse.ecf.protocol.nntp.store.tests.AbstractStoreTest;
@@ -44,9 +44,9 @@ public class StoreTest extends AbstractStoreTest {
 
 		newStore();
 
-		IServer[] subscribedServers = getStore().getServers();
+		INNTPServer[] subscribedServers = getStore().getServers();
 		for (int i = 0; i < subscribedServers.length; i++) {
-			IServer iServer = subscribedServers[i];
+			INNTPServer iServer = subscribedServers[i];
 			getStore().unsubscribeServer(iServer, true);
 		}
 
@@ -73,9 +73,9 @@ public class StoreTest extends AbstractStoreTest {
 
 	@After
 	public void tearDown() throws Exception {
-		IServer[] subscribedServers = getStore().getServers();
+		INNTPServer[] subscribedServers = getStore().getServers();
 		for (int i = 0; i < subscribedServers.length; i++) {
-			IServer iServer = subscribedServers[i];
+			INNTPServer iServer = subscribedServers[i];
 			getStore().unsubscribeServer(iServer, true);
 		}
 	}

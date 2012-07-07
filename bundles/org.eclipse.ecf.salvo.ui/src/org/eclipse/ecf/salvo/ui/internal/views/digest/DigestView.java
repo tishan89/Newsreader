@@ -12,16 +12,16 @@
 
 package org.eclipse.ecf.salvo.ui.internal.views.digest;
 
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.ArticleEventListnersFactory;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEvent;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEventListner;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEventListnersRegistry;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.Activator;
@@ -80,7 +80,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 		context.addServiceListener(this); // listening to store
 											// register/unregister
 
-		for (IStore store : ServerStoreFactory.instance()
+		for (INNTPStore store : ServerStoreFactory.instance()
 				.getServerStoreFacade().getStores()) {
 			store.addListener(this, SALVO.EVENT_SUBSCRIBE_UNSUBSCRIBE);
 		}
@@ -255,7 +255,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 	/**
 	 * Get selected server
 	 */
-	private IServer getSelectedServer() {
+	private INNTPServer getSelectedServer() {
 
 		String selectedServerForDigest = PreferencesUtil.instance()
 				.loadPluginSettings("selectedServerForDigest");
@@ -271,7 +271,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 			}
 		}
 
-		IServer[] servers;
+		INNTPServer[] servers;
 		try {
 			servers = ServerStoreFactory.instance().getServerStoreFacade()
 					.getFirstStore().getServers();

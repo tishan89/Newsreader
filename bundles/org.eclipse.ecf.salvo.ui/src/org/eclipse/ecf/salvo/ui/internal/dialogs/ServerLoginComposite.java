@@ -1,6 +1,6 @@
 package org.eclipse.ecf.salvo.ui.internal.dialogs;
 
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.provider.nntp.security.SalvoUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -30,7 +30,7 @@ public class ServerLoginComposite extends Composite {
 	private Label passwordLabel;
 	private Text pass;
 	private Button validateButton;
-	private final IServer server;
+	private final INNTPServer server;
 
 	/**
 	 * Create the composite.
@@ -38,7 +38,7 @@ public class ServerLoginComposite extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public ServerLoginComposite(Composite parent, int style, IServer server) {
+	public ServerLoginComposite(Composite parent, int style, INNTPServer server) {
 
 		super(parent, style);
 		this.server = server;

@@ -13,23 +13,23 @@
  *******************************************************************************/
 package org.eclipse.ecf.protocol.nntp.store.derby;
 
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreFactory;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.store.derby.internal.Store;
 
 /**
- * The store factory will create {@link IStore} implementations.
+ * The store factory will create {@link INNTPStore} implementations.
  * 
  * @author Wim Jongman
  * 
  */
-public class StoreFactory implements IStoreFactory {
+public class StoreFactory implements INNTPStoreFactory {
 
 	private Store store;
 
-	public IStore createStore(String root) throws StoreException {
+	public INNTPStore createStore(String root) throws StoreException {
 		if (store == null)
 			store = new Store(root + SALVO.SEPARATOR + "SalvoDerbyStore");
 		return store;

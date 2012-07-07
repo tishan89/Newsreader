@@ -13,7 +13,7 @@ package org.eclipse.ecf.protocol.nntp.model;
 
 /**
  * This interface is responsible for maintaining the subscribe and unsubscribe
- * administration. It is mainly part of the {@link IStore} functions.
+ * administration. It is mainly part of the {@link INNTPStore} functions.
  * 
  * @author Wim Jongman
  * 
@@ -23,7 +23,7 @@ public interface IAdministration {
 	/**
 	 * Stores this newsgroup in the list of groups this user subscribes to in
 	 * this server and adds this group to the passed server instance by calling
-	 * {@link IServer#subscribeNewsgroup(INewsgroup)}. If the group was added to
+	 * {@link INNTPServer#subscribeNewsgroup(INewsgroup)}. If the group was added to
 	 * the list of groups an {@link SALVO#EVENT_ADD_GROUP} event is fired.
 	 * 
 	 * @param server
@@ -46,13 +46,13 @@ public interface IAdministration {
 	 * @throws StoreException
 	 *             if the subscription could not be stored
 	 */
-	public void subscribeServer(IServer server, String passWord)
+	public void subscribeServer(INNTPServer server, String passWord)
 			throws StoreException;
 
 	/**
 	 * Removes this newsgroup from the list of groups this user subscribes to in
 	 * the server. You should also removes this group from the server by calling
-	 * {@link IServer#unsubscribeNewsgroup(ISubscribedNewsgroup)}.
+	 * {@link INNTPServer#unsubscribeNewsgroup(ISubscribedNewsgroup)}.
 	 * 
 	 * @param group
 	 *            may not be null
@@ -73,18 +73,18 @@ public interface IAdministration {
 	 *            historical data from which this server can be resurrected.
 	 * @throws StoreException
 	 */
-	public void unsubscribeServer(IServer server, boolean permanent)
+	public void unsubscribeServer(INNTPServer server, boolean permanent)
 			throws StoreException;
 
 	/**
 	 * Retrieves the list of newsgroups this user is subscribed of the passed
-	 * {@link IServer}.
+	 * {@link INNTPServer}.
 	 * 
 	 * @param server
 	 * @return a Collection of newsgroups, can be empty may not be null.
 	 * @throws StoreException
 	 */
-	public INewsgroup[] getSubscribedNewsgroups(IServer server)
+	public INewsgroup[] getSubscribedNewsgroups(INNTPServer server)
 			throws StoreException;
 
 	/**
@@ -93,6 +93,6 @@ public interface IAdministration {
 	 * @return the possible empty list of IServer objects. May not return null.
 	 * @throws NNTPException
 	 */
-	public IServer[] getServers() throws NNTPException;
+	public INNTPServer[] getServers() throws NNTPException;
 
 }

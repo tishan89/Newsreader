@@ -18,7 +18,7 @@ import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
@@ -42,7 +42,7 @@ public class ArticlePanelContentProvider implements ILazyTreeContentProvider {
 
 	private int currentIndex;
 
-	private IServerStoreFacade storeFacade;
+	private INNTPServerStoreFacade storeFacade;
 
 	private int childrenCount;
 

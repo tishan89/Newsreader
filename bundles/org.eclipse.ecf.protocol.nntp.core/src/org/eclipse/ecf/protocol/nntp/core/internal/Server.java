@@ -14,13 +14,14 @@ package org.eclipse.ecf.protocol.nntp.core.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
+import org.eclipse.ecf.channel.model.IServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
-public class Server implements IServer {
+public class Server implements INNTPServer {
 
 	private final String address;
 
@@ -28,7 +29,7 @@ public class Server implements IServer {
 
 	private final boolean secure;
 
-	private IServerConnection connection;
+	private INNTPServerConnection connection;
 
 	private String organization;
 
@@ -81,7 +82,7 @@ public class Server implements IServer {
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof IServer)
+		if (obj instanceof INNTPServer)
 			return toString().equals(obj.toString());
 		return super.equals(obj);
 	}
@@ -94,7 +95,7 @@ public class Server implements IServer {
 		return secure;
 	}
 
-	public IServerConnection getServerConnection() {
+	public INNTPServerConnection getServerConnection() {
 		return connection;
 	}
 
@@ -110,7 +111,8 @@ public class Server implements IServer {
 	}
 
 	public void setServerConnection(IServerConnection connection) {
-		this.connection = connection;
+		
+		this.connection = (INNTPServerConnection)connection;
 	}
 
 	public String getOrganization() {

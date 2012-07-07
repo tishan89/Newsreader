@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ecf.protocol.nntp.model;
 
-public class NNTPException extends Exception {
+public class NNTPException extends Exception  {
 
 	/**
 	 * 

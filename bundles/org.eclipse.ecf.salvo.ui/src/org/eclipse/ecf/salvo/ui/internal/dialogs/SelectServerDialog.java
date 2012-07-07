@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.tools.PreferencesUtil;
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,7 +34,7 @@ import org.eclipse.swt.layout.GridData;
 
 public class SelectServerDialog extends Dialog {
 
-	private ArrayList<IServer> servers;
+	private ArrayList<INNTPServer> servers;
 	private Combo combo;
 	
 	/**
@@ -116,10 +116,10 @@ public class SelectServerDialog extends Dialog {
 	
 	private void initServers(){
 		
-		servers = new ArrayList<IServer>();
+		servers = new ArrayList<INNTPServer>();
 		
 		try {
-			for (IServer server : ServerStoreFactory.instance()
+			for (INNTPServer server : ServerStoreFactory.instance()
 					.getServerStoreFacade().getFirstStore().getServers()) {
 				servers.add(server);
 			}
@@ -129,7 +129,7 @@ public class SelectServerDialog extends Dialog {
 	}
 	
 	
-	private IServer getSelectedServer(){
+	private INNTPServer getSelectedServer(){
 		return servers.get(combo.getSelectionIndex());
 	}
 

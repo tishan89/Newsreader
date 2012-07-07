@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.ecf.salvo.ui.wizards.SubscribeGroupWizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,8 +31,8 @@ public class SubscribeHandler extends AbstractHandler {
 		if (selection.getFirstElement() instanceof ISalvoResource) {
 			ISalvoResource resource = (ISalvoResource) selection.getFirstElement();
 
-			if (resource.getObject() instanceof IServer) {
-				SubscribeGroupWizard wizard = new SubscribeGroupWizard((IServer) resource.getObject());
+			if (resource.getObject() instanceof INNTPServer) {
+				SubscribeGroupWizard wizard = new SubscribeGroupWizard((INNTPServer) resource.getObject());
 				WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 				dialog.create();
 				dialog.open();

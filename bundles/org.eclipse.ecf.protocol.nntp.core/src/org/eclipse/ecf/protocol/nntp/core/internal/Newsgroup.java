@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 
 public class Newsgroup implements INewsgroup {
 
@@ -26,7 +26,7 @@ public class Newsgroup implements INewsgroup {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient final IServer server;
+	private transient final INNTPServer server;
 
 	private final String newsgroupName;
 
@@ -44,7 +44,7 @@ public class Newsgroup implements INewsgroup {
 
 	private boolean subscribed;
 
-	public Newsgroup(IServer server2, String newsgroup, String description) {
+	public Newsgroup(INNTPServer server2, String newsgroup, String description) {
 		this.server = server2;
 		this.newsgroupName = newsgroup.trim();
 		this.description = description.trim();
@@ -84,7 +84,7 @@ public class Newsgroup implements INewsgroup {
 		return server.getURL() + "/?group=" + getNewsgroupName();
 	}
 
-	public IServer getServer() {
+	public INNTPServer getServer() {
 		return server;
 	}
 

@@ -14,8 +14,8 @@ package org.eclipse.ecf.salvo.ui.wizards;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.internal.wizards.NewNewsServerWizardPage;
 import org.eclipse.ecf.salvo.ui.internal.wizards.SubscribeGroupWizardPage;
@@ -32,12 +32,12 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	protected NewNewsServerWizardPage page1;
 	protected SubscribeGroupWizardPage page2;
-	private IServer server;
+	private INNTPServer server;
 
 	public NewNewsServerWizard() {
 	}
 
-	public NewNewsServerWizard(IServer server) {
+	public NewNewsServerWizard(INNTPServer server) {
 		this.server = server;
 	}
 
@@ -52,7 +52,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 
-		IServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
 		try {
 			storeFacade.subscribeServer(page1.getServer(), page1.getPass());
@@ -97,7 +97,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		return super.getNextPage(page);
 	}
 
-	public IServer getServer() {
+	public INNTPServer getServer() {
 		return server;
 	}
 }

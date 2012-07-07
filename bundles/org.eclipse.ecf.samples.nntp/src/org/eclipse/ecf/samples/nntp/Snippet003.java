@@ -11,16 +11,16 @@
  *******************************************************************************/
 package org.eclipse.ecf.samples.nntp;
 
+import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.protocol.nntp.store.filesystem.StoreFactory;
 
@@ -63,7 +63,7 @@ public class Snippet003 {
 			return "foo.bar@eclipse.org";
 		}
 	};
-	private static IServerStoreFacade serverStoreFacade;
+	private static INNTPServerStoreFacade serverStoreFacade;
 	private static boolean firstTime = true;
 
 	/**
@@ -74,7 +74,7 @@ public class Snippet003 {
 		Debug.debug = false;
 
 		// Create a store in the store store.
-		IStore store = new StoreFactory().createStore(SALVO.SALVO_HOME
+		INNTPStore store = new StoreFactory().createStore(SALVO.SALVO_HOME
 				+ SALVO.SEPARATOR + "snippet003");
 		StoreStore.instance().registerStore(store);
 
@@ -83,7 +83,7 @@ public class Snippet003 {
 				.getServerStoreFacade();
 
 		// Create a server
-		IServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
+		INNTPServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
 				credentials, true);
 
 		// Attach a newsgroup to the server

@@ -13,9 +13,9 @@ package org.eclipse.ecf.protocol.nntp.core;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.osgi.service.prefs.Preferences;
@@ -27,7 +27,7 @@ public final class UpdateRunner implements Runnable {
 
 		setThreadRunning(true);
 
-		IServerStoreFacade facade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade facade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
 		while (facade.getStores().length == 0 && isThreadRunning()) {
 			facade = ServerStoreFactory.instance().getServerStoreFacade();
@@ -41,13 +41,13 @@ public final class UpdateRunner implements Runnable {
 		}
 
 		while (isThreadRunning()) {
-			IServer[] subscribedServers = new IServer[0];
-			IStore[] stores = facade.getStores();
+			INNTPServer[] subscribedServers = new INNTPServer[0];
+			INNTPStore[] stores = facade.getStores();
 			for (int i = 0; i < stores.length; i++) {
-				IStore store = stores[i];
+				INNTPStore store = stores[i];
 				subscribedServers = getSubscribedServers(store);
 				for (int j = 0; j < subscribedServers.length; j++) {
-					IServer server = subscribedServers[j];
+					INNTPServer server = subscribedServers[j];
 					INewsgroup[] subscribedNewsgroups;
 					try {
 						subscribedNewsgroups = facade
@@ -84,19 +84,19 @@ public final class UpdateRunner implements Runnable {
 		}
 	}
 
-	private IServer[] getSubscribedServers(IStore store) {
+	private INNTPServer[] getSubscribedServers(INNTPStore store) {
 		try {
 			return store.getServers();
 		} catch (NNTPException e) {
 			Debug.log(getClass(), e);
-			return new IServer[0];
+			return new INNTPServer[0];
 		}
 	}
 
-	private boolean serversClean(IServer[] subscribedServers) {
+	private boolean serversClean(INNTPServer[] subscribedServers) {
 
 		for (int j = 0; j < subscribedServers.length; j++) {
-			IServer server = subscribedServers[j];
+			INNTPServer server = subscribedServers[j];
 			if (server.isDirty())
 				return false;
 		}

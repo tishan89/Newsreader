@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.internal.wizards;
 
+import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
-import org.eclipse.ecf.protocol.nntp.model.AbstractCredentials;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.provider.nntp.security.SalvoUtil;
 import org.eclipse.ecf.salvo.ui.wizards.NewNewsServerWizard;
@@ -193,7 +193,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 	}
 
 	private void fillDialog() {
-		IServer server = ((NewNewsServerWizard) getWizard()).getServer();
+		INNTPServer server = ((NewNewsServerWizard) getWizard()).getServer();
 		if (server == null) {
 			return;
 		}
@@ -232,9 +232,9 @@ public class NewNewsServerWizardPage extends WizardPage {
 						setErrorMessage(null);
 
 						try {
-							IServer server = ServerFactory.getCreateServer(
+							INNTPServer server = ServerFactory.getCreateServer(
 									v_address, v_port, credentials, v_secure);
-							IServerConnection connection = server
+							INNTPServerConnection connection = server
 									.getServerConnection();
 							connection.disconnect();
 							connection.connect();
@@ -316,7 +316,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 		return null;
 	}
 
-	public IServer getServer() throws NNTPException {
+	public INNTPServer getServer() throws NNTPException {
 		AbstractCredentials credentials = new AbstractCredentials(getUser(),
 				getEmail(), getLogin(), getPass());
 		return ServerFactory.getCreateServer(getAddress(), getPort(),

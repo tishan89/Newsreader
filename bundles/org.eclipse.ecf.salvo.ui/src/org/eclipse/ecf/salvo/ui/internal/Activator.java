@@ -15,12 +15,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.eclipse.ecf.channel.model.ISecureStore;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.core.UpdateRunner;
-import org.eclipse.ecf.protocol.nntp.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreFactory;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.provider.nntp.security.SalvoSecureStore;
@@ -65,7 +65,7 @@ public class Activator extends AbstractUIPlugin implements ServiceListener {
 
 		// Find running stores
 		ServiceReference[] serviceReferences = context.getServiceReferences(
-				IStoreFactory.class.getName(), null);
+				INNTPStoreFactory.class.getName(), null);
 		if (serviceReferences != null) {
 			for (ServiceReference serviceReference : serviceReferences) {
 				registerStore(serviceReference);
@@ -122,20 +122,20 @@ public class Activator extends AbstractUIPlugin implements ServiceListener {
 
 		// Register a store
 		if (event.getType() == ServiceEvent.REGISTERED) {
-			if (context.getService(event.getServiceReference()) instanceof IStoreFactory) {
+			if (context.getService(event.getServiceReference()) instanceof INNTPStoreFactory) {
 				registerStore(event.getServiceReference());
 			}
 		}
 
 		// Unregister a store
 		if (event.getType() == ServiceEvent.UNREGISTERING) {
-			if (context.getService(event.getServiceReference()) instanceof IStoreFactory) {
-				IStoreFactory factory = (IStoreFactory) context
+			if (context.getService(event.getServiceReference()) instanceof INNTPStoreFactory) {
+				INNTPStoreFactory factory = (INNTPStoreFactory) context
 						.getService(event.getServiceReference());
 				Debug.log(getClass(), "Lost store factory "
 						+ factory.getClass().getName());
 				try {
-					IStore store = factory.createStore(SALVO.SALVO_HOME);
+					INNTPStore store = factory.createStore(SALVO.SALVO_HOME);
 					StoreStore.instance().unregisterStore(store);
 					Debug.log(getClass(),
 							"Unregistered store " + store.getDescription());
@@ -147,13 +147,13 @@ public class Activator extends AbstractUIPlugin implements ServiceListener {
 	}
 
 	private void registerStore(ServiceReference serviceReference) {
-		IStoreFactory factory = (IStoreFactory) context
+		INNTPStoreFactory factory = (INNTPStoreFactory) context
 				.getService(serviceReference);
 		ISecureStore prefs = new SalvoSecureStore();
 		Debug.log(getClass(), "Found store factory "
 				+ factory.getClass().getName());
 		try {
-			IStore store = factory.createStore(SALVO.SALVO_HOME);
+			INNTPStore store = factory.createStore(SALVO.SALVO_HOME);
 			store.setSecureStore(prefs);
 			StoreStore.instance().registerStore(store);
 			Debug.log(getClass(), "Registered store " + store.getDescription());

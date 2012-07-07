@@ -14,11 +14,11 @@ package org.eclipse.ecf.protocol.nntp.core.internal;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.ecf.channel.model.AbstractCredentials;
+import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
-import org.eclipse.ecf.protocol.nntp.model.AbstractCredentials;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -32,7 +32,7 @@ public class ServerTest {
 	final static String LOGIN = "exquisitus";
 	final static String PASSWORD = "flinder1f7";
 	private static final int PORT = 119;
-	private static IServer server;
+	private static INNTPServer server;
 	final static String SERVER = "news.eclipse.org";
 	final static String USER = "Wim Jongman";
 
@@ -110,7 +110,7 @@ public class ServerTest {
 
 	@Test
 	public void testSetServerConnection() {
-		IServerConnection connection = server.getServerConnection();
+		INNTPServerConnection connection = server.getServerConnection();
 		server.setServerConnection(null);
 		assertTrue(server.getServerConnection() == null);
 		server.setServerConnection(connection);

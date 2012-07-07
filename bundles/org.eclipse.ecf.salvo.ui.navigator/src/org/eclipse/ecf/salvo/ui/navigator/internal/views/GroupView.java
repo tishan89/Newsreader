@@ -12,14 +12,14 @@
 package org.eclipse.ecf.salvo.ui.navigator.internal.views;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.editor.ArticlePanel;
 import org.eclipse.ecf.salvo.ui.internal.editor.ArticlePanelInput;
@@ -41,7 +41,7 @@ public class GroupView extends CommonNavigator implements IStoreEventListener {
 		StoreStore.instance().addListener(this, SALVO.EVENT_STORE);
 		ISalvoResource root = SalvoResourceFactory.getResource("root", "root");
 		root.setChildProvider(new SubscribedServerProvider());
-		for (IStore store : ServerStoreFactory.instance()
+		for (INNTPStore store : ServerStoreFactory.instance()
 				.getServerStoreFacade().getStores())
 			store.addListener(this, SALVO.EVENT_ALL_EVENTS);
 
@@ -69,8 +69,8 @@ public class GroupView extends CommonNavigator implements IStoreEventListener {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				if (event.getEventObject() instanceof INewsgroup
-						|| event.getEventObject() instanceof IServer
-						|| event.getEventObject() instanceof IStore) {
+						|| event.getEventObject() instanceof INNTPServer
+						|| event.getEventObject() instanceof INNTPStore) {
 					Debug.log(this.getClass(), "Event: " + event.getEventType());
 					TreePath[] elements = getCommonViewer()
 							.getExpandedTreePaths();

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.ecf.salvo.ui.internal.resources.SalvoResourceFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -34,9 +34,9 @@ public class NewsGroupProvider implements IChildProvider {
 
 		ArrayList<ISalvoResource> result = new ArrayList<ISalvoResource>();
 
-		if (parent.getObject() instanceof IServer) {
+		if (parent.getObject() instanceof INNTPServer) {
 
-			IServer server = (IServer) parent.getObject();
+			INNTPServer server = (INNTPServer) parent.getObject();
 			INewsgroup[] list;
 			try {
 				list = server.getServerConnection().getNewsgroups();

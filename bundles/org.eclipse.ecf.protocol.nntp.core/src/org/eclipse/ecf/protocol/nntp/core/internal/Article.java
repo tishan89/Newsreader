@@ -14,17 +14,18 @@ package org.eclipse.ecf.protocol.nntp.core.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 
 public class Article implements IArticle {
 
 	/**
-	 * 
+	 * This is the Implementation of IArticle. 
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -120,7 +121,7 @@ public class Article implements IArticle {
 		return result;
 	}
 
-	public IServer getServer() {
+	public INNTPServer getServer() {
 		return newsgroup.getServer();
 	}
 
@@ -195,8 +196,8 @@ public class Article implements IArticle {
 		this.newsgroup = newsgroup;
 	}
 
-	public void setParent(IArticle article) {
-		parent = article;
+	public void setParent(IMessage article) {
+		parent = (IArticle)article;
 	}
 
 	public String getLastReference() {

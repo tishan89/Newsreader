@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 
 
 public class Leveler {
@@ -46,7 +46,7 @@ public class Leveler {
 		parent = null;
 	}
 
-	public void storeGroup(IServer server, INewsgroup group) {
+	public void storeGroup(INNTPServer server, INewsgroup group) {
 		Leveler serverLeveler = getServerLeveler(server);
 		serverLeveler.storeDeep(null, group, 1);
 
@@ -123,7 +123,7 @@ public class Leveler {
 		this.levelText = getLevelText(group, level);
 	}
 
-	private Leveler getServerLeveler(IServer server) {
+	private Leveler getServerLeveler(INNTPServer server) {
 		String serverKey = server.getAddress() + ":" + server.getPort();
 		Leveler serverLeveler = serverLevelers.get(serverKey);
 		if (serverLeveler == null) {
@@ -137,7 +137,7 @@ public class Leveler {
 		return parent;
 	}
 
-	public Collection<Object> getChildren(IServer server) {
+	public Collection<Object> getChildren(INNTPServer server) {
 
 		ArrayList<Object> result = new ArrayList<Object>();
 		result.addAll(getServerLeveler(server).getLevelers());

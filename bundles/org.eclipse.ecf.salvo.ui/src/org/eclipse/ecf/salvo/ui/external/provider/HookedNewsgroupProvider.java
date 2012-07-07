@@ -20,15 +20,15 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.AbstractCredentials;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IServerConnection;
-import org.eclipse.ecf.protocol.nntp.model.IServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IEvaluationService;
@@ -77,11 +77,11 @@ public class HookedNewsgroupProvider {
 	 * @return whether server defined by the provider is already subscribed
 	 */
 	public boolean isServerSubscribed(INewsGroupProvider provider) {
-		IServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
 
 		try {
-			for (IServer currentServer : storeFacade.getServers()) {
+			for (INNTPServer currentServer : storeFacade.getServers()) {
 				if ((currentServer.getAddress().equals(provider
 						.getServerAddress()))
 						&& (currentServer.getPort() == provider.getServerPort())) {
@@ -103,16 +103,16 @@ public class HookedNewsgroupProvider {
 	 */
 	public INewsgroup getNewsgroup(INewsGroupProvider provider) {
 
-		IServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
 
 		INewsgroup group = null;
 
 		try {
 			// server
-			IServer server = null;
+			INNTPServer server = null;
 
-			for (IServer currentServer : storeFacade.getServers()) {
+			for (INNTPServer currentServer : storeFacade.getServers()) {
 				if ((currentServer.getAddress().equals(provider
 						.getServerAddress()))
 						&& (currentServer.getPort() == provider.getServerPort())) {
@@ -133,7 +133,7 @@ public class HookedNewsgroupProvider {
 				server = ServerFactory.getCreateServer(
 						provider.getServerAddress(), provider.getServerPort(),
 						credentials, provider.isSecure());
-				IServerConnection connection = server.getServerConnection();
+				INNTPServerConnection connection = server.getServerConnection();
 				connection.disconnect();
 				connection.connect();
 				connection.setModeReader(server);

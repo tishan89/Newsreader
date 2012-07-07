@@ -28,7 +28,7 @@ public interface IBasicNNTPInterface {
 	 * etiquette "Re: " + subject if the subject of the given article does not
 	 * already start with this string.
 	 * 
-	 * @see IServerConnection#replyToArticle(IArticle, StringBuffer)
+	 * @see INNTPServerConnection#replyToArticle(IArticle, StringBuffer)
 	 * 
 	 * @param replySubject
 	 * @param article
@@ -91,7 +91,7 @@ public interface IBasicNNTPInterface {
 	 * @see #flush()
 	 * 
 	 */
-	public void setModeReader(IServer server) throws NNTPIOException,
+	public void setModeReader(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException;
 
 	/**
@@ -101,7 +101,7 @@ public interface IBasicNNTPInterface {
 	 * @throws NNTPConnectException
 	 * @throws NNTPIOException
 	 */
-	public INewsgroup[] listNewsgroups(IServer server) throws NNTPIOException,
+	public INewsgroup[] listNewsgroups(INNTPServer server) throws NNTPIOException,
 			NNTPIOException, UnexpectedResponseException;
 
 	/**
@@ -111,7 +111,7 @@ public interface IBasicNNTPInterface {
 	 * @throws NNTPConnectException
 	 * @throws NNTPIOException
 	 */
-	public INewsgroup[] listNewsgroups(IServer server, Date since)
+	public INewsgroup[] listNewsgroups(INNTPServer server, Date since)
 			throws NNTPIOException, UnexpectedResponseException;
 
 	/**
@@ -156,7 +156,7 @@ public interface IBasicNNTPInterface {
 	 * @throws NNTPConnectException
 	 * @throws NNTPIOException
 	 */
-	public String[] getOverviewHeaders(IServer server) throws NNTPIOException,
+	public String[] getOverviewHeaders(INNTPServer server) throws NNTPIOException,
 			UnexpectedResponseException;
 
 }

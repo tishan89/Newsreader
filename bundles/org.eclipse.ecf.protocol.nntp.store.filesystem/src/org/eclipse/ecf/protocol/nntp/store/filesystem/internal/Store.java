@@ -31,26 +31,28 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.ecf.channel.model.AbstractCredentials;
+import org.eclipse.ecf.channel.model.ICredentials;
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.model.ISecureStore;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
+import org.eclipse.ecf.channel.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
-import org.eclipse.ecf.protocol.nntp.model.AbstractCredentials;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPConnectException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
-import org.eclipse.ecf.protocol.nntp.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
@@ -61,7 +63,7 @@ import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
  * @author Wim Jongman
  * 
  */
-public class Store implements IStore {
+public class Store implements INNTPStore {
 
 	// private static final String SALVO.SEPARATOR =
 	// System.getProperty("file.separator");
@@ -147,7 +149,7 @@ public class Store implements IStore {
 		return result;
 	}
 
-	private void loadSubscribedGroups(IServer server) {
+	private void loadSubscribedGroups(INNTPServer server) {
 
 		File file = new File(getStoreHome() + server.getAddress()
 				+ SALVO.SEPARATOR + "groups.txt");
@@ -202,7 +204,8 @@ public class Store implements IStore {
 	 * @param server
 	 * @throws StoreException
 	 */
-	private void writeSubscribedGroups(IServer server) throws StoreException {
+	private void writeSubscribedGroups(INNTPServer server)
+			throws StoreException {
 
 		// Create the server in this database and create a reference to the
 		// newsgroups in groups.txt
@@ -257,7 +260,7 @@ public class Store implements IStore {
 			FileWriter writer = new FileWriter(file);
 			Collection servers = storedServers.values();
 			for (Iterator iterator = servers.iterator(); iterator.hasNext();) {
-				IServer server = (IServer) iterator.next();
+				INNTPServer server = (INNTPServer) iterator.next();
 				writer.write(server.toString() + "\n");
 			}
 			writer.close();
@@ -269,7 +272,7 @@ public class Store implements IStore {
 
 	}
 
-	public void subscribeServer(final IServer server, final String passWord) {
+	public void subscribeServer(final INNTPServer server, final String passWord) {
 		server.setSubscribed(true);
 		getServers();
 		getSecureStore().put(server.getAddress(), passWord, true);
@@ -381,7 +384,7 @@ public class Store implements IStore {
 	 * @param server
 	 * @return
 	 */
-	private String getServerHome(IServer server) {
+	private String getServerHome(INNTPServer server) {
 
 		File file = new File(getStoreHome() + server.getAddress());
 		if (!file.exists())
@@ -463,7 +466,7 @@ public class Store implements IStore {
 		}
 	}
 
-	public void unsubscribeServer(IServer server, boolean permanent)
+	public void unsubscribeServer(INNTPServer server, boolean permanent)
 			throws StoreException {
 		// Disconnect first
 		server.setSubscribed(false);
@@ -527,7 +530,7 @@ public class Store implements IStore {
 					.remove(group);
 	}
 
-	public INewsgroup[] getSubscribedNewsgroups(IServer server) {
+	public INewsgroup[] getSubscribedNewsgroups(INNTPServer server) {
 
 		if (subscribedGroups.get(server.getAddress()) == null)
 			subscribedGroups.put(server.getAddress(), new ArrayList());
@@ -568,9 +571,10 @@ public class Store implements IStore {
 
 	}
 
-	public IServer[] getServers() {
+	public INNTPServer[] getServers() {
 		if (storedServers != null && !storedServers.isEmpty())
-			return (IServer[]) storedServers.values().toArray(new IServer[0]);
+			return (INNTPServer[]) storedServers.values().toArray(
+					new INNTPServer[0]);
 
 		storedServers = new HashMap();
 
@@ -595,7 +599,7 @@ public class Store implements IStore {
 			// Do we already have a server initialized?
 			ICredentials credentials = new AbstractCredentials(user, email,
 					logIn, null);
-			IServer server = null;
+			INNTPServer server = null;
 			server = ServerFactory
 					.getServer(address, port, credentials, secure);
 
@@ -603,8 +607,8 @@ public class Store implements IStore {
 			if (server == null) {
 				String pass = getSecureStore().get(address, "");
 				if (pass == null)
-					return (IServer[]) storedServers.values().toArray(
-							new IServer[0]);
+					return (INNTPServer[]) storedServers.values().toArray(
+							new INNTPServer[0]);
 				credentials = new AbstractCredentials(user, email, logIn, pass);
 				try {
 					server = ServerFactory.getCreateServer(address, port,
@@ -620,7 +624,8 @@ public class Store implements IStore {
 			fireEvent(new StoreEvent(server, SALVO.EVENT_RELOAD));
 		}
 
-		return (IServer[]) storedServers.values().toArray(new IServer[0]);
+		return (INNTPServer[]) storedServers.values().toArray(
+				new INNTPServer[0]);
 	}
 
 	public IArticle[] getArticles(INewsgroup newsgroup, int from, int to) {
@@ -1182,7 +1187,7 @@ public class Store implements IStore {
 			throw new NNTPException("Error parsing URL " + URL, e);
 		}
 
-		IServer[] servers = getServers();
+		INNTPServer[] servers = getServers();
 		for (int i = 0; i < servers.length; i++) {
 			if (servers[i].getURL().equals(server)) {
 				INewsgroup[] groups = getSubscribedNewsgroups(servers[i]);
@@ -1203,7 +1208,7 @@ public class Store implements IStore {
 		int result = 0;
 
 		try {
-			IServer[] servers = getServers();
+			INNTPServer[] servers = getServers();
 			for (int i = 0; i < servers.length; i++) {
 				INewsgroup[] groups = getSubscribedNewsgroups(servers[i]);
 
@@ -1317,11 +1322,11 @@ public class Store implements IStore {
 			return 0;
 		return listeners.size();
 	}
-	
+
 	/**
 	 * Get articles of a particular user
 	 */
-	public IArticle[] getArticlesByUserId(INewsgroup newsgroup, String userId){
+	public IArticle[] getArticlesByUserId(INewsgroup newsgroup, String userId) {
 		Debug.log(getClass(), "Not implemented yet");
 		return null;
 	}
@@ -1337,7 +1342,7 @@ public class Store implements IStore {
 	/**
 	 * Get Marked Articles from all newsgroups
 	 */
-	public IArticle[] getAllMarkedArticles(IServer server) {
+	public IArticle[] getAllMarkedArticles(INNTPServer server) {
 		Debug.log(getClass(), "Not implemented yet");
 		return null;
 	}
@@ -1349,6 +1354,35 @@ public class Store implements IStore {
 		Debug.log(getClass(), "Not implemented yet");
 		return null;
 	}
+
+	//Redirecting methods inherited from IStore
+	public void storeMessage(IMessage[] messages) throws Exception {
+		// if(messages.){
+		storeArticles((IArticle[]) messages);
+
+	}
+
+	public void storeMessageBody(IMessage message, String[] body)
+			throws Exception {
+
+		storeArticleBody((IArticle) message, body);
+
+	}
 	
-			
+	public void updateMessage(IMessage message) throws Exception {
+		updateArticle((IArticle) message);
+		
+	}
+	
+	
+	public IMessage getMessageByMsgId(IMessageSource source, String msgId) {
+		
+		return getArticleByMsgId((INewsgroup)source, msgId);
+	}
+
+	
+	public IMessage getMessageByMsgId(String msgId) {
+		//not related to context
+		return null;
+	}
 }

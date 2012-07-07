@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 
 public class NewsgroupDAO {
@@ -75,7 +75,7 @@ public class NewsgroupDAO {
 		}
 	}
 
-	public INewsgroup[] getNewsgroup(IServer server, String groupName)
+	public INewsgroup[] getNewsgroup(INNTPServer server, String groupName)
 			throws StoreException {
 		try {
 			getNewsgroup.setString(1, server.getURL());
@@ -93,7 +93,7 @@ public class NewsgroupDAO {
 		}
 	}
 
-	private void addGroups(IServer server, ResultSet r, ArrayList result)
+	private void addGroups(INNTPServer server, ResultSet r, ArrayList result)
 			throws SQLException {
 		while (r.next()) {
 			INewsgroup group = NewsgroupFactory.createNewsGroup(server,
@@ -108,7 +108,7 @@ public class NewsgroupDAO {
 
 	}
 
-	public INewsgroup[] getNewsgroup(IServer server, int id)
+	public INewsgroup[] getNewsgroup(INNTPServer server, int id)
 			throws StoreException {
 		try {
 			getNewsgroupByID.setInt(1, id);
@@ -126,7 +126,7 @@ public class NewsgroupDAO {
 		}
 	}
 
-	public INewsgroup[] getSubscribedNewsgroups(IServer server,
+	public INewsgroup[] getSubscribedNewsgroups(INNTPServer server,
 			boolean subscribed) throws StoreException {
 		try {
 			getSubscribedNewsgroup.setString(1, server.getURL());

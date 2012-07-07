@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.ecf.salvo.ui.internal.resources.SalvoResourceFactory;
@@ -33,9 +33,9 @@ public class SubscribedNewsGroupProvider implements IChildProvider {
 
 		ArrayList<ISalvoResource> result = new ArrayList<ISalvoResource>();
 
-		if (parent.getObject() instanceof IServer) {
+		if (parent.getObject() instanceof INNTPServer) {
 
-			IServer server = (IServer) parent.getObject();
+			INNTPServer server = (INNTPServer) parent.getObject();
 			INewsgroup[] groups;
 			try {
 				groups = ServerStoreFactory.instance().getServerStoreFacade()

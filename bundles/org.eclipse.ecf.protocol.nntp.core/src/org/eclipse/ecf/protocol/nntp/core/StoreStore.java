@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.ecf.protocol.nntp.model.IStore;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEvent;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventListener;
-import org.eclipse.ecf.protocol.nntp.model.IStoreEventProvider;
+import org.eclipse.ecf.channel.model.IStoreEvent;
+import org.eclipse.ecf.channel.model.IStoreEventListener;
+import org.eclipse.ecf.channel.model.IStoreEventProvider;
+import org.eclipse.ecf.channel.model.StoreEvent;
+import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
-import org.eclipse.ecf.protocol.nntp.model.StoreEvent;
 
 public class StoreStore implements IStoreEventProvider {
 
@@ -31,18 +31,18 @@ public class StoreStore implements IStoreEventProvider {
 
 	private HashMap listeners;
 
-	public void registerStore(IStore store) {
+	public void registerStore(INNTPStore store) {
 		stores.put(store.getDescription(), store);
 		fireEvent(new StoreEvent(store, SALVO.EVENT_REGISTER_STORE));
 	}
 
-	public void unregisterStore(IStore store) {
+	public void unregisterStore(INNTPStore store) {
 		stores.remove(store.getDescription());
 		fireEvent(new StoreEvent(store, SALVO.EVENT_UNREGISTER_STORE));
 	}
 
-	public IStore[] getStores() {
-		return (IStore[]) stores.values().toArray(new IStore[0]);
+	public INNTPStore[] getStores() {
+		return (INNTPStore[]) stores.values().toArray(new INNTPStore[0]);
 	}
 
 	public static StoreStore instance() {

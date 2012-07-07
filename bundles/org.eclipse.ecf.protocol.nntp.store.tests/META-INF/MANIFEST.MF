@@ -7,5 +7,6 @@ Bundle-Vendor: Eclipse ECF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4;bundle-version="4.8.1",
  org.eclipse.ecf.protocol.nntp.model;bundle-version="0.7.0",
- org.eclipse.ecf.protocol.nntp.core;bundle-version="0.7.0"
+ org.eclipse.ecf.protocol.nntp.core;bundle-version="0.7.0",
+ org.eclipse.ecf.channel.model;bundle-version="1.0.0"
 Export-Package: org.eclipse.ecf.protocol.nntp.store.tests

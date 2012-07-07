@@ -16,7 +16,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -35,14 +35,14 @@ public class UnsubscribeHandler extends AbstractHandler {
 			for (Object selo : ((IStructuredSelection) selection).toArray()) {
 				if (selo instanceof ISalvoResource) {
 					Object object = ((ISalvoResource) selo).getObject();
-					if (object instanceof IServer) {
+					if (object instanceof INNTPServer) {
 
 						MessageDialogWithToggle x = MessageDialogWithToggle
 								.openInformation(
 										HandlerUtil.getActiveShell(event),
-										((IServer) object).getAddress(),
+										((INNTPServer) object).getAddress(),
 										"Do you want to unsubscribe from server "
-												+ ((IServer) object)
+												+ ((INNTPServer) object)
 														.getAddress() + "?",
 										"Delete resource contents on disk? (cannot be undone)",
 										false, null, null);
@@ -50,7 +50,7 @@ public class UnsubscribeHandler extends AbstractHandler {
 							try {
 								ServerStoreFactory.instance()
 										.getServerStoreFacade()
-										.unsubscribeServer((IServer) object,
+										.unsubscribeServer((INNTPServer) object,
 												x.getToggleState());
 							} catch (StoreException e) {
 								throw new ExecutionException(e.getMessage(), e);

@@ -11,23 +11,15 @@
  *******************************************************************************/
 package org.eclipse.ecf.protocol.nntp.model;
 
-import java.io.Serializable;
 import java.util.Calendar;
+import org.eclipse.ecf.channel.model.IMessageSource;
 
 /**
  * @author jongw
  * 
  */
-public interface INewsgroup extends Serializable, IProperties, ISubscribable {
+public interface INewsgroup extends IMessageSource {
 
-	public final String POSTING_PERMITTED = "Y";
-
-	public final String POSTING_NOT_PERMITTED = "n";
-
-	public final String POSTING_PERMITTED_MODERATED = "m";
-
-	
-	public int getLowWaterMark();
 	/**
 	 * This method is used to get the number of the first article in the group.
 	 * The server can report a non existing article number as the first article
@@ -40,8 +32,8 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 *            the new lowest number
 	 */
 
-	
-	public int getHighWaterMark();
+	public int getLowWaterMark();
+
 	/**
 	 * This method is used get the last article in the group. The server can
 	 * report a non existing article number as the last article due to the
@@ -53,28 +45,22 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 *            the new lowest number
 	 */
 
-	
-	public int getArticleCount();
+	public int getHighWaterMark();
+
 	/**
 	 * This method is used to get the total number of articles in the group. RFC
 	 * 977 states that this number might not be correct (due to articles being
 	 * canceled). Clients should be relaxed towards this number
 	 * 
-	 * @see {@link #adjustArticleCount(int)}
+	 * @see {@link #adjustMessageCount(int)}
 	 * 
 	 * @param newLowestNumber
 	 *            the new lowest number
 	 */
 
-	public String getCreatedBy();
-
-	public Calendar getDateCreated();
-
-	public String getDescription();
-
 	public String getNewsgroupName();
 
-	public IServer getServer();
+	public INNTPServer getServer();
 
 	/**
 	 * Sets the first and last article (these numbers are referred to as the
@@ -122,12 +108,7 @@ public interface INewsgroup extends Serializable, IProperties, ISubscribable {
 	 *            the new count
 	 */
 	public void adjustArticleCount(int newCount);
-
-	/**
-	 * 
-	 * @return the string that makes this newsgroup unique
-	 */
-	String getURL();
-
+	
+	public int getArticleCount();
 
 }

@@ -1,5 +1,7 @@
 package org.eclipse.ecf.provider.nntp;
 
+import java.nio.channels.InterruptibleChannel;
+
 import org.eclipse.ecf.core.AbstractContainer;
 import org.eclipse.ecf.core.BaseContainer;
 import org.eclipse.ecf.core.ContainerConnectException;
@@ -12,14 +14,23 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.core.security.IConnectContext;
-import org.eclipse.ecf.protocol.nntp.model.IServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.provider.nntp.internal.NNTPNameSpace;
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.ITransactionContext;
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.model.IServer;
 
-public class NNTPServerContainer extends AbstractContainer {
+public class NNTPServerContainer extends AbstractContainer implements
+		IChannelContainerAdapter {
 
 	private ID targetID;
 	private ID containerID;
-	private IServer server;
+	private INNTPServer server;
+	private IConnectContext context;
+	private INNTPServerStoreFacade serverStoreFacade;
 
 	protected NNTPServerContainer(ID id) {
 		super();
@@ -32,8 +43,8 @@ public class NNTPServerContainer extends AbstractContainer {
 
 	public void connect(ID targetID, IConnectContext connectContext)
 			throws ContainerConnectException {
-		if (!targetID.getNamespace().getName().equals(
-				getConnectNamespace().getName()))
+		if (!targetID.getNamespace().getName()
+				.equals(getConnectNamespace().getName()))
 			throw new ContainerConnectException(
 					"targetID not of appropriate Namespace");
 
@@ -68,12 +79,44 @@ public class NNTPServerContainer extends AbstractContainer {
 		return containerID;
 	}
 
-	public void setServer(IServer server) {
+	public void setServer(INNTPServer server) {
 		this.server = server;
 
 	}
 
-	public IServer getServer() {
+	public INNTPServer getServer() {
 		return server;
+	}
+
+	public IMessage[] fetchMessages(ITransactionContext context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IMessage fetchMessage(IMessageSource source, String Id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void reply(IMessage message, ITransactionContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void postNewMessages(IMessage message, ITransactionContext context)
+			throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	public IMessageSource[] listMessageSources(IServer server) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void delete(ITransactionContext context, String messageId)
+			throws Exception {
+		// TODO Auto-generated method stub
+
 	}
 }
