@@ -6,7 +6,8 @@ Bundle-SymbolicName: org.eclipse.ecf.provider.nntp.ui;singleton:=true
 Bundle-Version: 0.7.0.qualifier
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.ecf.ui
+Require-Bundle: org.eclipse.ecf.ui,
+ org.eclipse.ecf.channel;bundle-version="1.0.0"
 Import-Package: org.eclipse.ecf.core;version="3.0.0",
  org.eclipse.ecf.core.events,
  org.eclipse.ecf.core.identity;version="3.0.0",
