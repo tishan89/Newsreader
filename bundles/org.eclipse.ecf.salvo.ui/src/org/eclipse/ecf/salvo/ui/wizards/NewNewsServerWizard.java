@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
+import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -51,6 +52,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
+		//IServer targetServer = page1.getServer();
 
 		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();

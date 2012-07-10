@@ -16,7 +16,8 @@ Require-Bundle: org.eclipse.ecf;bundle-version="3.0.0",
  org.eclipse.ecf.identity;bundle-version="3.0.0",
  org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.ecf.channel;bundle-version="1.0.0",
- org.eclipse.ecf.channel.model;bundle-version="1.0.0"
+ org.eclipse.ecf.channel.model;bundle-version="1.0.0",
+ org.eclipse.ecf.protocol.nntp.core;bundle-version="0.8.0"
 Export-Package: org.eclipse.ecf.provider.nntp,
  org.eclipse.ecf.provider.nntp.internal
 Import-Package: org.eclipse.ecf.protocol.nntp.model;version="0.6.0"

@@ -14,6 +14,7 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.core.security.IConnectContext;
+import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.provider.nntp.internal.NNTPNameSpace;
@@ -50,7 +51,8 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 		fireContainerEvent(new ContainerConnectingEvent(getID(), targetID));
 
-		// XXX connect to remote service here
+		serverStoreFacade = ServerStoreFactory.instance()
+				.getServerStoreFacade();
 
 		this.targetID = targetID;
 		fireContainerEvent(new ContainerConnectedEvent(getID(), targetID));
