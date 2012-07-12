@@ -1,5 +1,6 @@
 package org.eclipse.ecf.channel;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -8,6 +9,11 @@ import org.eclipse.ecf.channel.model.*;
 /*This is the Connectivity API for Salvo Newsreader. 
  * Any concrete protocol dependent implementation 
  * will have to implement this interface.
+ * 
+ * IMessage : Abstract representation of simplest 
+ * news element(Eg: IAticle, Forum Post)
+ * 
+ * IMessageSource : Abstract representation of a
  */
 
 public interface IChannelContainerAdapter extends IAdaptable {
@@ -72,4 +78,13 @@ public interface IChannelContainerAdapter extends IAdaptable {
 	 */
 	public void delete(ITransactionContext context, String messageId)
 			throws Exception;
+	
+	/**
+	 * Method to connect to given set of message sources
+	 * @param collection Set of message sources
+	 * @throws Exception 
+	 */
+	public void connectToMessageSource(Collection<IMessageSource> collection) throws Exception;
+		
+	
 }

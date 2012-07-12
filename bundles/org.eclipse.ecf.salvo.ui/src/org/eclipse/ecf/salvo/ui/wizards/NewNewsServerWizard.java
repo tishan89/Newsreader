@@ -11,13 +11,27 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.ITransactionContext;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
+import org.eclipse.ecf.core.ContainerConnectException;
+import org.eclipse.ecf.core.ContainerCreateException;
+import org.eclipse.ecf.core.ContainerFactory;
+import org.eclipse.ecf.core.IContainer;
+import org.eclipse.ecf.core.identity.ID;
+import org.eclipse.ecf.core.identity.IDCreateException;
+import org.eclipse.ecf.core.identity.IDFactory;
+import org.eclipse.ecf.core.security.CallbackHandler;
+import org.eclipse.ecf.core.security.ConnectContextFactory;
+import org.eclipse.ecf.core.security.IConnectContext;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
+import org.eclipse.ecf.provider.nntp.NNTPServerContainer;
 import org.eclipse.ecf.salvo.ui.internal.wizards.NewNewsServerWizardPage;
 import org.eclipse.ecf.salvo.ui.internal.wizards.SubscribeGroupWizardPage;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,12 +42,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-
 public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	protected NewNewsServerWizardPage page1;
 	protected SubscribeGroupWizardPage page2;
 	private INNTPServer server;
+	private IContainer container;
+	private IConnectContext context;
+	private ID targetID;
+	private ITransactionContext tContext;
 
 	public NewNewsServerWizard() {
 	}
@@ -52,7 +69,52 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
-		//IServer targetServer = page1.getServer();
+		// IServer targetServer = page1.getServer();
+
+		try {
+
+			container = ContainerFactory.getDefault().createContainer(
+					"ecf.provider.nntp");
+			// context =
+			// ConnectContextFactory.createPasswordConnectContext(page1.getPass());
+			tContext = new ITransactionContext() {
+				private String pWord;
+
+				public CallbackHandler getCallbackHandler() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				public void setPWord(String pWord) {
+					this.pWord = pWord;
+
+				}
+
+				public String getPWord() {
+					return pWord;
+				}
+			};
+			tContext.setPWord(page1.getPass());
+			targetID = IDFactory.getDefault()
+					.createID(container.getConnectNamespace(),
+							page1.getServer().getURL());
+			if (container instanceof NNTPServerContainer) {
+				((NNTPServerContainer) container).setServer(page1.getServer());
+			}
+			container.connect(targetID, tContext);
+		} catch (ContainerCreateException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IDCreateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NNTPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ContainerConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
@@ -64,15 +126,15 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 			return false;
 		}
 
-		for (INewsgroup group : page2.getGroups()) {
-			try {
-				storeFacade.subscribeNewsgroup(group);
-			} catch (NNTPException e) {
-				MessageDialog.openError(getShell(), "Problem subscribing", e
-						.getMessage());
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		IChannelContainerAdapter adaptor = (IChannelContainerAdapter) container
+				.getAdapter(IChannelContainerAdapter.class);
+		try {
+			adaptor.connectToMessageSource(page2.getGroups());
+		} catch (Exception e) {
+
+			MessageDialog.openError(getShell(), "Problem subscribing",
+					e.getMessage());
+			e.printStackTrace();
 		}
 
 		return true;

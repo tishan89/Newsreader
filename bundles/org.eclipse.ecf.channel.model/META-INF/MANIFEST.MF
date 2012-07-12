@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Model
 Bundle-SymbolicName: org.eclipse.ecf.channel.model
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Activator: org.eclipse.ecf.channel.model.Activator
 Bundle-Vendor: Eclipse ECF
 Require-Bundle: org.eclipse.ui,

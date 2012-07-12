@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.provider.NewsContentProvider;
@@ -102,12 +103,12 @@ public class SubscribeGroupWizardPage extends WizardPage {
 		});
 	}
 
-	public Collection<INewsgroup> getGroups() {
-		ArrayList<INewsgroup> result = new ArrayList<INewsgroup>();
+	public Collection<IMessageSource> getGroups() {
+		ArrayList<IMessageSource> result = new ArrayList<IMessageSource>();
 		for (Object object : checkedItems)
 			if (object instanceof SalvoUIResource
-					&& ((SalvoUIResource) object).getObject() instanceof INewsgroup)
-				result.add((INewsgroup) ((SalvoUIResource) object).getObject());
+					&& ((SalvoUIResource) object).getObject() instanceof IMessageSource)
+				result.add((IMessageSource) ((SalvoUIResource) object).getObject());
 		return result;
 	}
 

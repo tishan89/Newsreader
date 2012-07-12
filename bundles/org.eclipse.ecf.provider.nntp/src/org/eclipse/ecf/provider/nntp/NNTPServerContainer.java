@@ -1,6 +1,8 @@
 package org.eclipse.ecf.provider.nntp;
 
 import java.nio.channels.InterruptibleChannel;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.ecf.core.AbstractContainer;
 import org.eclipse.ecf.core.BaseContainer;
@@ -17,12 +19,16 @@ import org.eclipse.ecf.core.security.IConnectContext;
 import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
+import org.eclipse.ecf.protocol.nntp.model.NNTPException;
+import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.provider.nntp.internal.NNTPNameSpace;
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
+//import org.eclipse.jface.dialogs.MessageDialog;
 
 public class NNTPServerContainer extends AbstractContainer implements
 		IChannelContainerAdapter {
@@ -44,15 +50,21 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 	public void connect(ID targetID, IConnectContext connectContext)
 			throws ContainerConnectException {
-		if (!targetID.getNamespace().getName()
+				if (!targetID.getNamespace().getName()
 				.equals(getConnectNamespace().getName()))
 			throw new ContainerConnectException(
 					"targetID not of appropriate Namespace");
 
 		fireContainerEvent(new ContainerConnectingEvent(getID(), targetID));
-
+		//(ITransactionContext)connectContext
 		serverStoreFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
+		try {
+			serverStoreFacade.subscribeServer(this.getServer(), ((ITransactionContext)connectContext).getPWord());
+		} catch (StoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		this.targetID = targetID;
 		fireContainerEvent(new ContainerConnectedEvent(getID(), targetID));
@@ -121,4 +133,27 @@ public class NNTPServerContainer extends AbstractContainer implements
 		// TODO Auto-generated method stub
 
 	}
+
+	public void connectToMessageSource(IMessageSource[] sources) throws NNTPException{
+		INewsgroup[] newsgroup = (INewsgroup[]) sources;
+		for (INewsgroup group : newsgroup) {			
+				serverStoreFacade.subscribeNewsgroup(group);
+			
+		}
+		
+	}
+
+	public void connectToMessageSource(Collection<IMessageSource> collection)
+			throws NNTPException {
+		ArrayList<INewsgroup> newsgroups = new ArrayList<INewsgroup>();
+		for(IMessageSource source : collection){
+			newsgroups.add((INewsgroup)source);
+		}
+		
+		for (INewsgroup group : newsgroups) {			
+			serverStoreFacade.subscribeNewsgroup(group);
+		
+	}
+	}
+
 }
