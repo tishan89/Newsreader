@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.tools.PreferencesUtil;
@@ -119,7 +119,7 @@ public class SelectServerDialog extends Dialog {
 		servers = new ArrayList<INNTPServer>();
 		
 		try {
-			for (INNTPServer server : ServerStoreFactory.instance()
+			for (INNTPServer server : NNTPServerStoreFactory.instance()
 					.getServerStoreFacade().getFirstStore().getServers()) {
 				servers.add(server);
 			}

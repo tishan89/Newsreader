@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
@@ -27,7 +27,7 @@ public class SubscribedServerProvider implements IChildProvider {
 
 		ArrayList<ISalvoResource> result = new ArrayList<ISalvoResource>();
 
-		if (ServerStoreFactory.instance().getServerStoreFacade()
+		if (NNTPServerStoreFactory.instance().getServerStoreFacade()
 				.getFirstStore() == null) {
 			Debug.log(this.getClass(), "No stores defined");
 			ISalvoResource er = SalvoResourceFactory.getResource("No store service is running", "No store service is running");
@@ -37,7 +37,7 @@ public class SubscribedServerProvider implements IChildProvider {
 		}
 
 		try {
-			for (INNTPServer server : ServerStoreFactory.instance()
+			for (INNTPServer server : NNTPServerStoreFactory.instance()
 					.getServerStoreFacade().getFirstStore()
 					.getServers()) {
 				ISalvoResource s1 = SalvoResourceFactory.getResource(

@@ -16,7 +16,7 @@ import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.ArticleEventListnersFactory;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEvent;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEventListner;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEventListnersRegistry;
@@ -80,7 +80,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 		context.addServiceListener(this); // listening to store
 											// register/unregister
 
-		for (INNTPStore store : ServerStoreFactory.instance()
+		for (INNTPStore store : NNTPServerStoreFactory.instance()
 				.getServerStoreFacade().getStores()) {
 			store.addListener(this, SALVO.EVENT_SUBSCRIBE_UNSUBSCRIBE);
 		}
@@ -262,7 +262,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 
 		if (selectedServerForDigest.equals("null")) {
 			try {
-				return ServerStoreFactory.instance().getServerStoreFacade()
+				return NNTPServerStoreFactory.instance().getServerStoreFacade()
 						.getFirstStore().getServers()[0];
 			} catch (NNTPException e) {
 				Debug.log(getClass(), e);
@@ -273,7 +273,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 
 		INNTPServer[] servers;
 		try {
-			servers = ServerStoreFactory.instance().getServerStoreFacade()
+			servers = NNTPServerStoreFactory.instance().getServerStoreFacade()
 					.getFirstStore().getServers();
 
 			for (int i = 0, length = servers.length; i < length; i++) {

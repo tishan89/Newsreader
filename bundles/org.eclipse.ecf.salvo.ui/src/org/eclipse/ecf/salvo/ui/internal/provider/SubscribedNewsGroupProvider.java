@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
@@ -38,7 +38,7 @@ public class SubscribedNewsGroupProvider implements IChildProvider {
 			INNTPServer server = (INNTPServer) parent.getObject();
 			INewsgroup[] groups;
 			try {
-				groups = ServerStoreFactory.instance().getServerStoreFacade()
+				groups = NNTPServerStoreFactory.instance().getServerStoreFacade()
 						.getSubscribedNewsgroups(server);
 			} catch (StoreException e) {
 				return result;

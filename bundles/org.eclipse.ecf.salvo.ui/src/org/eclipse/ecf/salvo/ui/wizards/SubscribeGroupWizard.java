@@ -11,8 +11,9 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
@@ -44,9 +45,9 @@ public class SubscribeGroupWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 
-		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
-		for (INewsgroup group : page1.getGroups()) {
+		for (IMessageSource group : page1.getGroups()) {
 			try {
 				storeFacade.subscribeNewsgroup(group);
 			} catch (NNTPException e) {

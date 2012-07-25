@@ -27,7 +27,7 @@ import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -165,7 +165,7 @@ public abstract class AbstractStoreTest {
 			}
 		};
 
-		INNTPServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
+		INNTPServer server = NNTPServerFactory.getCreateServer("news.eclipse.org", 119,
 				credentials, true);
 		getStore().subscribeServer(server, "flinder1f7");
 

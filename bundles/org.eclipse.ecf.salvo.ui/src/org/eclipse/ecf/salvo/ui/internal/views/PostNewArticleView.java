@@ -12,7 +12,7 @@
 package org.eclipse.ecf.salvo.ui.internal.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
@@ -163,7 +163,7 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 
 		monitor.subTask("Posting to newsgroup " + newsgroup.getNewsgroupName());
 		monitor.worked(1);
-		INNTPServerStoreFacade serverStoreFacade = ServerStoreFactory.instance().getServerStoreFacade();
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory.instance().getServerStoreFacade();
 		monitor.worked(1);
 
 		try {

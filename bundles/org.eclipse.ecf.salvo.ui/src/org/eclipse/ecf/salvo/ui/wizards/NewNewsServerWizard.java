@@ -26,7 +26,7 @@ import org.eclipse.ecf.core.security.CallbackHandler;
 import org.eclipse.ecf.core.security.ConnectContextFactory;
 import org.eclipse.ecf.core.security.IConnectContext;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class NewNewsServerWizard extends Wizard implements INewWizard {
+public class NewNewsServerWizard extends SalvoWizard implements INewWizard {
 
 	protected NewNewsServerWizardPage page1;
 	protected SubscribeGroupWizardPage page2;
@@ -72,9 +72,11 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		// IServer targetServer = page1.getServer();
 
 		try {
-
+			if(page1.getAddress().split(":")[0].contains("nntp")){
 			container = ContainerFactory.getDefault().createContainer(
 					"ecf.provider.nntp");
+			
+			}
 			// context =
 			// ConnectContextFactory.createPasswordConnectContext(page1.getPass());
 			tContext = new ITransactionContext() {
@@ -98,12 +100,14 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 			targetID = IDFactory.getDefault()
 					.createID(container.getConnectNamespace(),
 							page1.getServer().getURL());
+			
+			//just for testing
 			if (container instanceof NNTPServerContainer) {
-				((NNTPServerContainer) container).setServer(page1.getServer());
+				((NNTPServerContainer) container).setServer((INNTPServer)page1.getServer());
 			}
 			container.connect(targetID, tContext);
 		} catch (ContainerCreateException e2) {
-			// TODO Auto-generated catch block
+			 //TODO Auto-generated catch block
 			e2.printStackTrace();
 		} catch (IDCreateException e) {
 			// TODO Auto-generated catch block
@@ -116,7 +120,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 			e.printStackTrace();
 		}
 
-		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		/*INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
 				.getServerStoreFacade();
 		try {
 			storeFacade.subscribeServer(page1.getServer(), page1.getPass());
@@ -124,7 +128,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 			Debug.log(getClass(), e1);
 			setWindowTitle(e1.getMessage());
 			return false;
-		}
+		}*/
 
 		IChannelContainerAdapter adaptor = (IChannelContainerAdapter) container
 				.getAdapter(IChannelContainerAdapter.class);

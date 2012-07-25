@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.eclipse.ecf.channel.model.ICredentials;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPStore;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
@@ -88,7 +88,7 @@ public class ServerDAO {
 			ArrayList result = new ArrayList();
 
 			while (r.next()) {
-				INNTPServer server = ServerFactory.getCreateServer(getAddress(r),
+				INNTPServer server = NNTPServerFactory.getCreateServer(getAddress(r),
 						getPort(r), getCredentials(r), getSecure(r));
 				server.setSubscribed(getSubscribed(r));
 				result.add(server);
@@ -224,7 +224,7 @@ public class ServerDAO {
 				ArrayList result = new ArrayList();
 
 				while (r.next()) {
-					INNTPServer server = ServerFactory.getCreateServer(
+					INNTPServer server = NNTPServerFactory.getCreateServer(
 							getAddress(r), getPort(r), getCredentials(r),
 							getSecure(r));
 					server.setSubscribed(subscribed);

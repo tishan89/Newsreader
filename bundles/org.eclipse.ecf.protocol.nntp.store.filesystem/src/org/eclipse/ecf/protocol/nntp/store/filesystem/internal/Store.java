@@ -43,7 +43,7 @@ import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -600,7 +600,7 @@ public class Store implements INNTPStore {
 			ICredentials credentials = new AbstractCredentials(user, email,
 					logIn, null);
 			INNTPServer server = null;
-			server = ServerFactory
+			server = NNTPServerFactory
 					.getServer(address, port, credentials, secure);
 
 			// If not then we must get a password from the secure store
@@ -611,7 +611,7 @@ public class Store implements INNTPStore {
 							new INNTPServer[0]);
 				credentials = new AbstractCredentials(user, email, logIn, pass);
 				try {
-					server = ServerFactory.getCreateServer(address, port,
+					server = NNTPServerFactory.getCreateServer(address, port,
 							credentials, secure);
 				} catch (NNTPException e) {
 					Debug.log(getClass(), e);

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -41,7 +41,7 @@ public class GroupView extends CommonNavigator implements IStoreEventListener {
 		StoreStore.instance().addListener(this, SALVO.EVENT_STORE);
 		ISalvoResource root = SalvoResourceFactory.getResource("root", "root");
 		root.setChildProvider(new SubscribedServerProvider());
-		for (INNTPStore store : ServerStoreFactory.instance()
+		for (INNTPStore store : NNTPServerStoreFactory.instance()
 				.getServerStoreFacade().getStores())
 			store.addListener(this, SALVO.EVENT_ALL_EVENTS);
 

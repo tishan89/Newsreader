@@ -15,7 +15,7 @@ import org.apache.james.mime4j.codec.DecoderUtil;
 import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -71,7 +71,7 @@ public class Snippet001 {
 		Debug.debug = false;
 
 		// Create a server
-		INNTPServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
+		INNTPServer server = NNTPServerFactory.getCreateServer("news.eclipse.org", 119,
 				credentials, true);
 
 		// Attach a newsgroup to the server

@@ -18,7 +18,7 @@ import java.util.List;
 import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.MimeArticleContentHandler;
@@ -120,13 +120,13 @@ public class MessageView extends ViewPart implements ISelectionListener,
 							.getSubject()));
 
 					article.setRead(true);
-					article.setThreadAttributes(ServerStoreFactory.instance()
+					article.setThreadAttributes(NNTPServerStoreFactory.instance()
 							.getServerStoreFacade().getAllFollowUps(article));
-					ServerStoreFactory.instance().getServerStoreFacade()
+					NNTPServerStoreFactory.instance().getServerStoreFacade()
 							.updateArticle(article);
 
 					StringBuffer buffer = new StringBuffer();
-					String[] body = (String[]) ServerStoreFactory.instance()
+					String[] body = (String[]) NNTPServerStoreFactory.instance()
 							.getServerStoreFacade().getArticleBody(article);
 					for (String line : body) {
 						buffer.append(line + SALVO.CRLF);

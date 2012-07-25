@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.views.digest;
 import java.util.ArrayList;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -42,7 +42,7 @@ class ThisUserArticlesContentProvider implements ILazyTreeContentProvider {
 
 	public ThisUserArticlesContentProvider(TreeViewer viewer) {
 		this.viewer = viewer;
-		serverStoreFacade = ServerStoreFactory.instance()
+		serverStoreFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 	}
 

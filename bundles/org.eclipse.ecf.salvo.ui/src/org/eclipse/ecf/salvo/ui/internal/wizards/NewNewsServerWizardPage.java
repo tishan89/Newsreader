@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.internal.wizards;
 
+import java.util.Map;
+
 import org.eclipse.ecf.channel.model.AbstractCredentials;
+import org.eclipse.ecf.channel.model.IServer;
+import org.eclipse.ecf.channel.model.IServerConnection;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
@@ -232,8 +236,9 @@ public class NewNewsServerWizardPage extends WizardPage {
 						setErrorMessage(null);
 
 						try {
-							INNTPServer server = ServerFactory.getCreateServer(
-									v_address, v_port, credentials, v_secure);
+							INNTPServer server = NNTPServerFactory
+									.getCreateServer(v_address, v_port,
+											credentials, v_secure);
 							INNTPServerConnection connection = server
 									.getServerConnection();
 							connection.disconnect();
@@ -316,15 +321,98 @@ public class NewNewsServerWizardPage extends WizardPage {
 		return null;
 	}
 
-	public INNTPServer getServer() throws NNTPException {
+	/*
+	 * Have to change the server factory.
+	 * Under Construction.
+	 */
+
+	public IServer getServer() throws NNTPException {
 		AbstractCredentials credentials = new AbstractCredentials(getUser(),
 				getEmail(), getLogin(), getPass());
-		return ServerFactory.getCreateServer(getAddress(), getPort(),
-				credentials, isSecure());
+		IServer server = new IServer() {
+			private boolean subcribed = false;
+			private IServerConnection serverConnection;
+			private boolean isSecure = false;
+
+			public void setSubscribed(boolean subscribe) {
+				this.subcribed = subscribe;
+			}
+
+			public boolean isSubscribed() {
+
+				return this.subcribed;
+			}
+
+			public void setProperty(String key, String value) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public String getProperty(String key) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public Map getProperties() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public void setServerConnection(IServerConnection connection) {
+				this.serverConnection = connection;
+
+			}
+
+			public boolean isSecure() {
+				return this.isSecure;
+			}
+
+			public boolean isInitialized() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			public boolean isAnonymous() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			public void init() throws Exception {
+				// TODO Auto-generated method stub
+
+			}
+
+			public String getURL() {
+				return getLogin();
+			}
+
+			public IServerConnection getServerConnection() {
+				return this.serverConnection;
+			}
+
+			public int getPort() {
+				return getPort();
+			}
+
+			public String getOrganization() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public String getID() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			public String getAddress() {
+				return getAddress();
+			}
+		};
+
+		return server;
 	}
 
 	public boolean isSecure() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

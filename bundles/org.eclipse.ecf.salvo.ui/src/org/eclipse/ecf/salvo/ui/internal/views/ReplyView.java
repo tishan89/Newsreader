@@ -17,7 +17,7 @@ import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
@@ -71,7 +71,7 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 			StringBuffer buffer = new StringBuffer();
 			String[] body;
 			try {
-				body = (String[]) ServerStoreFactory.instance().getServerStoreFacade()
+				body = (String[]) NNTPServerStoreFactory.instance().getServerStoreFacade()
 						.getArticleBody(article);
 			} catch (Exception e1) {
 				body = new String[] { e1.getMessage() };
@@ -165,7 +165,7 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 
 		monitor.subTask("Posting to newsgroup " + article.getNewsgroup().getNewsgroupName());
 		monitor.worked(1);
-		INNTPServerStoreFacade serverStoreFacade = ServerStoreFactory.instance().getServerStoreFacade();
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory.instance().getServerStoreFacade();
 		monitor.worked(1);
 
 		try {

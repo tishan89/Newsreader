@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
@@ -77,7 +77,7 @@ public class HookedNewsgroupProvider {
 	 * @return whether server defined by the provider is already subscribed
 	 */
 	public boolean isServerSubscribed(INewsGroupProvider provider) {
-		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 
 		try {
@@ -103,7 +103,7 @@ public class HookedNewsgroupProvider {
 	 */
 	public INewsgroup getNewsgroup(INewsGroupProvider provider) {
 
-		INNTPServerStoreFacade storeFacade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 
 		INewsgroup group = null;
@@ -130,7 +130,7 @@ public class HookedNewsgroupProvider {
 						provider.getLogin(), password);
 
 				// create server
-				server = ServerFactory.getCreateServer(
+				server = NNTPServerFactory.getCreateServer(
 						provider.getServerAddress(), provider.getServerPort(),
 						credentials, provider.isSecure());
 				INNTPServerConnection connection = server.getServerConnection();

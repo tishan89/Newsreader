@@ -27,10 +27,10 @@ public final class UpdateRunner implements Runnable {
 
 		setThreadRunning(true);
 
-		INNTPServerStoreFacade facade = ServerStoreFactory.instance()
+		INNTPServerStoreFacade facade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 		while (facade.getStores().length == 0 && isThreadRunning()) {
-			facade = ServerStoreFactory.instance().getServerStoreFacade();
+			facade = NNTPServerStoreFactory.instance().getServerStoreFacade();
 			try {
 				Debug.log(getClass(), "Salvo Thread: Waiting for Store");
 				Thread.sleep(5000);

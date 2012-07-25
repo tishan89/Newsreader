@@ -103,7 +103,7 @@ public class SubscribeGroupWizardPage extends WizardPage {
 		});
 	}
 
-	public Collection<IMessageSource> getGroups() {
+	public ArrayList<IMessageSource> getGroups() {
 		ArrayList<IMessageSource> result = new ArrayList<IMessageSource>();
 		for (Object object : checkedItems)
 			if (object instanceof SalvoUIResource

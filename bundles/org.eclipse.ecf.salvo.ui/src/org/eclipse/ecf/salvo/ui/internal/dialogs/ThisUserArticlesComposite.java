@@ -17,7 +17,7 @@ import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
@@ -119,7 +119,7 @@ public class ThisUserArticlesComposite extends Composite {
 	}
 
 	private void initArticleList(INewsgroup newsgroup) {
-		articles = ServerStoreFactory.instance().getServerStoreFacade()
+		articles = NNTPServerStoreFactory.instance().getServerStoreFacade()
 				.getThisUserArticles(newsgroup);
 
 		if (articles.length == 0) {
@@ -143,7 +143,7 @@ public class ThisUserArticlesComposite extends Composite {
 
 		try {
 
-			String[] body = (String[]) ServerStoreFactory.instance()
+			String[] body = (String[]) NNTPServerStoreFactory.instance()
 					.getServerStoreFacade().getArticleBody(article);
 
 			for (String line : body) {

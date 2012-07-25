@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.channel.model.ICredentials;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.junit.After;
@@ -40,7 +40,7 @@ public class ServerTest {
 	public static void setUpBeforeClass() throws Exception {
 
 		ICredentials credentials = new AbstractCredentials(USER,EMAIL,LOGIN,PASSWORD) {};
-		server = ServerFactory.getCreateServer(SERVER, PORT, credentials, true);
+		server = NNTPServerFactory.getCreateServer(SERVER, PORT, credentials, true);
 	}
 
 	@AfterClass

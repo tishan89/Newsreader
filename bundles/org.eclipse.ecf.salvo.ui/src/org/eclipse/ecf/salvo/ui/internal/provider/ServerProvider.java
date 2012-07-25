@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
@@ -27,7 +27,7 @@ public class ServerProvider implements IChildProvider {
 		ArrayList<ISalvoResource> result = new ArrayList<ISalvoResource>();
 
 		try {
-			for (INNTPServer server : ServerStoreFactory.instance()
+			for (INNTPServer server : NNTPServerStoreFactory.instance()
 					.getServerStoreFacade().getFirstStore()
 					.getServers()) {
 				ISalvoResource s1 = SalvoResourceFactory.getResource(server

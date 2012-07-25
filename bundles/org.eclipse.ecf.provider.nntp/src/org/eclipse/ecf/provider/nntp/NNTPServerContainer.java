@@ -16,7 +16,7 @@ import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.core.security.IConnectContext;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -57,7 +57,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 		fireContainerEvent(new ContainerConnectingEvent(getID(), targetID));
 		//(ITransactionContext)connectContext
-		serverStoreFacade = ServerStoreFactory.instance()
+		serverStoreFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 		try {
 			serverStoreFacade.subscribeServer(this.getServer(), ((ITransactionContext)connectContext).getPWord());

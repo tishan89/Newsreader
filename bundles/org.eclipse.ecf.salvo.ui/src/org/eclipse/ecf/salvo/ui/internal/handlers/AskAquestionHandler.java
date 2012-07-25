@@ -15,7 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.salvo.ui.wizards.AskAQuestionWizard;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -29,7 +29,7 @@ public class AskAquestionHandler extends AbstractHandler {
 		WizardDialog dialog = new WizardDialog(
 				HandlerUtil.getActiveShell(event), wizard);
 
-		if (ServerStoreFactory.instance().getServerStoreFacade()
+		if (NNTPServerStoreFactory.instance().getServerStoreFacade()
 				.getFirstStore() == null) {
 			
 			Shell dialogShell = new Shell();

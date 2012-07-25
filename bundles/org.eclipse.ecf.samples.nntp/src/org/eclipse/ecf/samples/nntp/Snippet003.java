@@ -14,8 +14,8 @@ package org.eclipse.ecf.samples.nntp;
 import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerFactory;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -79,11 +79,11 @@ public class Snippet003 {
 		StoreStore.instance().registerStore(store);
 
 		// Get the interface between server and store
-		serverStoreFacade = ServerStoreFactory.instance()
+		serverStoreFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 
 		// Create a server
-		INNTPServer server = ServerFactory.getCreateServer("news.eclipse.org", 119,
+		INNTPServer server = NNTPServerFactory.getCreateServer("news.eclipse.org", 119,
 				credentials, true);
 
 		// Attach a newsgroup to the server

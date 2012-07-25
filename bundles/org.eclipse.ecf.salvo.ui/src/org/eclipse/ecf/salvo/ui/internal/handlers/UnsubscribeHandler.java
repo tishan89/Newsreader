@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
@@ -48,7 +48,7 @@ public class UnsubscribeHandler extends AbstractHandler {
 										false, null, null);
 						if (x.getReturnCode() == Window.OK) {
 							try {
-								ServerStoreFactory.instance()
+								NNTPServerStoreFactory.instance()
 										.getServerStoreFacade()
 										.unsubscribeServer((INNTPServer) object,
 												x.getToggleState());
@@ -66,7 +66,7 @@ public class UnsubscribeHandler extends AbstractHandler {
 												.getNewsgroupName() + "?");
 						if (x) {
 							try {
-								ServerStoreFactory.instance()
+								NNTPServerStoreFactory.instance()
 										.getServerStoreFacade()
 										.unsubscribeNewsgroup(
 												(INewsgroup) object, false);

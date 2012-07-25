@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.StoreException;
@@ -31,7 +31,7 @@ public class MarkArticle extends AbstractHandler {
 			if (res.getObject() instanceof IArticle) {
 				IArticle article = (IArticle) res.getObject();
 				article.setMarked(!article.isMarked());
-				INNTPServerStoreFacade serverStoreFacade = ServerStoreFactory
+				INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
 						.instance().getServerStoreFacade();
 				try {
 					serverStoreFacade.updateArticle(article);

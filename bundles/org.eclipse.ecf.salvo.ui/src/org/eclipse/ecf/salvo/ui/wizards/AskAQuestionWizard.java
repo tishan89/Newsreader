@@ -12,7 +12,7 @@
 package org.eclipse.ecf.salvo.ui.wizards;
 
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
@@ -72,7 +72,7 @@ public class AskAQuestionWizard extends Wizard {
 			String subject = composeNewArticleWizardPage.getSubject();
 			String body = composeNewArticleWizardPage.getBodyText();
 
-			INNTPServerStoreFacade serverStoreFacade = ServerStoreFactory
+			INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
 					.instance().getServerStoreFacade();
 			try {
 

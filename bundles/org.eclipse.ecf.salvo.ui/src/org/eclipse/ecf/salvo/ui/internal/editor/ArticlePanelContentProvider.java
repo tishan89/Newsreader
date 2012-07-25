@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ecf.protocol.nntp.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.ServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
@@ -64,7 +64,7 @@ public class ArticlePanelContentProvider implements ILazyTreeContentProvider {
 
 		this.viewer = (TreeViewer) viewer;
 		newsgroup = (INewsgroup) newInput;
-		storeFacade = ServerStoreFactory.instance().getServerStoreFacade();
+		storeFacade = NNTPServerStoreFactory.instance().getServerStoreFacade();
 		this.viewer.getTree().removeAll();
 		currentIndex = 0;
 		childrenCount = 0;
