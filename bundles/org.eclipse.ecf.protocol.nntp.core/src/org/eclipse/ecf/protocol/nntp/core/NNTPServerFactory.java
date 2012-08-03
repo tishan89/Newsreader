@@ -15,8 +15,8 @@ import java.util.HashMap;
 
 import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.protocol.nntp.core.internal.Newsgroup;
-import org.eclipse.ecf.protocol.nntp.core.internal.Server;
-import org.eclipse.ecf.protocol.nntp.core.internal.ServerConnection;
+import org.eclipse.ecf.protocol.nntp.core.internal.NNTPServer;
+import org.eclipse.ecf.protocol.nntp.core.internal.NNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
@@ -47,8 +47,8 @@ public class NNTPServerFactory {
 			return server;
 		}
 
-		server = new Server(address, port, secure);
-		INNTPServerConnection connection = new ServerConnection(server);
+		server = new NNTPServer(address, port, secure);
+		INNTPServerConnection connection = new NNTPServerConnection(server);
 		connection.setCredentials(credentials);
 		if (servers.get(server.toString()) != null)
 			return (INNTPServer) servers.get(server.toString());

@@ -4,7 +4,8 @@ Bundle-Name: Core Plug-in
 Bundle-SymbolicName: org.eclipse.ecf.protocol.nntp.core;singleton:=true
 Bundle-Version: 0.8.0.qualifier
 Bundle-Vendor: Eclipse ECF
-Require-Bundle: org.eclipse.ecf.protocol.nntp.model;bundle-version="0.5.0",
+Require-Bundle: org.eclipse.ecf.channel.core;bundle-version="1.0.0",
+ org.eclipse.ecf.protocol.nntp.model;bundle-version="0.5.0",
  org.eclipse.ecf.channel.model;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
  J2SE-1.2,

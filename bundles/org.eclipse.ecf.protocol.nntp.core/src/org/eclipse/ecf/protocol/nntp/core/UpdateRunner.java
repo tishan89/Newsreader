@@ -12,6 +12,7 @@
 package org.eclipse.ecf.protocol.nntp.core;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;

@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ecf.protocol.nntp.core;
 
-import org.eclipse.ecf.protocol.nntp.core.internal.ServerStoreFacade;
+import org.eclipse.ecf.protocol.nntp.core.internal.NNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 
 
@@ -24,7 +24,7 @@ public class NNTPServerStoreFactory {
 	public INNTPServerStoreFacade getServerStoreFacade() {
 		
 		if (facade == null) {
-			facade = new ServerStoreFacade();
+			facade = new NNTPServerStoreFacade();
 			facade.init();
 		}
 		return facade;

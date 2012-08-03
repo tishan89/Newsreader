@@ -15,7 +15,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 
@@ -161,5 +161,9 @@ public class Newsgroup implements INewsgroup {
 	public void setSubscribed(boolean subscribed) {
 		this.subscribed = subscribed;
 
+	}
+
+	public String getMessageSourceName() {
+		return getNewsgroupName();
 	}
 }
