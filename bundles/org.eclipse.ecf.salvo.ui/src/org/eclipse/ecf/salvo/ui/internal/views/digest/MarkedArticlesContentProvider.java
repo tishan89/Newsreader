@@ -13,7 +13,7 @@ package org.eclipse.ecf.salvo.ui.internal.views.digest;
 
 import java.util.ArrayList;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;

@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;

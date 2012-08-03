@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.internal.editor;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.salvo.ui.internal.MimeArticleContentHandler;
 import org.eclipse.swt.SWT;

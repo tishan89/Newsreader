@@ -1,6 +1,6 @@
 package org.eclipse.ecf.salvo.ui.internal.provider;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.salvo.ui.internal.Activator;
 import org.eclipse.ecf.salvo.ui.internal.preferences.PreferenceModel;

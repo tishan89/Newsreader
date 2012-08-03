@@ -13,6 +13,7 @@ package org.eclipse.ecf.salvo.ui.wizards;
 
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.ITransactionContext;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.core.ContainerConnectException;
@@ -25,7 +26,6 @@ import org.eclipse.ecf.core.identity.IDFactory;
 import org.eclipse.ecf.core.security.CallbackHandler;
 import org.eclipse.ecf.core.security.ConnectContextFactory;
 import org.eclipse.ecf.core.security.IConnectContext;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -42,11 +42,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-public class NewNewsServerWizard extends SalvoWizard implements INewWizard {
+public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	protected NewNewsServerWizardPage page1;
 	protected SubscribeGroupWizardPage page2;
-	private INNTPServer server;
+	private IServer server;
 	private IContainer container;
 	private IConnectContext context;
 	private ID targetID;
@@ -55,7 +55,7 @@ public class NewNewsServerWizard extends SalvoWizard implements INewWizard {
 	public NewNewsServerWizard() {
 	}
 
-	public NewNewsServerWizard(INNTPServer server) {
+	public NewNewsServerWizard(IServer server) {
 		this.server = server;
 	}
 
@@ -158,14 +158,15 @@ public class NewNewsServerWizard extends SalvoWizard implements INewWizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		try {
 			if (page instanceof SubscribeGroupWizardPage)
-				((SubscribeGroupWizardPage) page).setInput(page1.getServer());
+				// TODO temporary fix
+				((SubscribeGroupWizardPage) page).setInput((INNTPServer)page1.getServer());
 		} catch (NNTPException e) {
 			Debug.log(getClass(), e);
 		}
 		return super.getNextPage(page);
 	}
 
-	public INNTPServer getServer() {
+	public IServer getServer() {
 		return server;
 	}
 }

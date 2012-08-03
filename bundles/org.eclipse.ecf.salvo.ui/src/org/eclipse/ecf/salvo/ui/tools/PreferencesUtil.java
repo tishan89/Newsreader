@@ -12,7 +12,7 @@
 package org.eclipse.ecf.salvo.ui.tools;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.osgi.service.prefs.Preferences;
 import org.osgi.service.prefs.BackingStoreException;
 

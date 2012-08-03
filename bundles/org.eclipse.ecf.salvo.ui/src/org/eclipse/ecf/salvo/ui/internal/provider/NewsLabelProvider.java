@@ -13,7 +13,7 @@ package org.eclipse.ecf.salvo.ui.internal.provider;
 
 import java.util.HashSet;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.salvo.ui.internal.Activator;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.jface.viewers.ILabelProviderListener;

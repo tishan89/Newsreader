@@ -12,10 +12,10 @@
 
 package org.eclipse.ecf.salvo.ui.internal.views.digest;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.protocol.nntp.core.ArticleEventListnersFactory;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEvent;
 import org.eclipse.ecf.protocol.nntp.model.IArticleEventListner;

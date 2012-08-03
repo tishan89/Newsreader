@@ -20,8 +20,8 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
@@ -40,6 +40,8 @@ import org.eclipse.ui.services.IEvaluationService;
  * @author isuru Please note that this is under construction
  * 
  */
+
+// TODO should be upgraded to support multiple protocols
 public class HookedNewsgroupProvider {
 
 	private static final String EXTENSIONPOINT_ID = "org.eclipse.ecf.salvo.ui.newsgroupProvider";
@@ -76,7 +78,7 @@ public class HookedNewsgroupProvider {
 	 *            Newsgroup Provider
 	 * @return whether server defined by the provider is already subscribed
 	 */
-	public boolean isServerSubscribed(INewsGroupProvider provider) {
+	public boolean isServerSubscribed(IMessageSourceProvider provider) {
 		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
 
@@ -101,7 +103,7 @@ public class HookedNewsgroupProvider {
 	 *            INewsGroupProvider
 	 * @return the INewsgroup of the INewsGroupProvider
 	 */
-	public INewsgroup getNewsgroup(INewsGroupProvider provider) {
+	public INewsgroup getNewsgroup(IMessageSourceProvider provider) {
 
 		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
 				.getServerStoreFacade();
@@ -186,9 +188,9 @@ public class HookedNewsgroupProvider {
 	 * 
 	 * @return NewsGroup Providers
 	 */
-	public INewsGroupProvider[] getProviders() {
+	public IMessageSourceProvider[] getProviders() {
 
-		final ArrayList<INewsGroupProvider> newsgroupProvider = new ArrayList<INewsGroupProvider>();
+		final ArrayList<IMessageSourceProvider> newsgroupProvider = new ArrayList<IMessageSourceProvider>();
 
 		IConfigurationElement[] config = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(EXTENSIONPOINT_ID);
@@ -209,7 +211,7 @@ public class HookedNewsgroupProvider {
 				if (result == EvaluationResult.TRUE) {
 					final Object provider = newsgroup
 							.createExecutableExtension("class");
-					newsgroupProvider.add((INewsGroupProvider) provider);
+					newsgroupProvider.add((IMessageSourceProvider) provider);
 				}
 
 			} catch (CoreException e) {
@@ -217,8 +219,8 @@ public class HookedNewsgroupProvider {
 			}
 
 		}
-		return (INewsGroupProvider[]) newsgroupProvider
-				.toArray(new INewsGroupProvider[0]);
+		return (IMessageSourceProvider[]) newsgroupProvider
+				.toArray(new IMessageSourceProvider[0]);
 	}
 
 }

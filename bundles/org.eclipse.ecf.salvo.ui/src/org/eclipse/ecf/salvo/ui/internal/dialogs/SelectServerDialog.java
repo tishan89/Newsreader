@@ -13,7 +13,7 @@ package org.eclipse.ecf.salvo.ui.internal.dialogs;
 
 import java.util.ArrayList;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;

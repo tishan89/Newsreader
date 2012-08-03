@@ -15,8 +15,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.Enumeration;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.core.UpdateRunner;
 import org.eclipse.ecf.protocol.nntp.model.INNTPStore;

@@ -14,7 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 

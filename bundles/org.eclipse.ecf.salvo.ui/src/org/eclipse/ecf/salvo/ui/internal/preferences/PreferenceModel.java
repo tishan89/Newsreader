@@ -1,6 +1,6 @@
 package org.eclipse.ecf.salvo.ui.internal.preferences;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.Activator;
 import org.eclipse.jface.preference.IPreferenceStore;

@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;

@@ -13,10 +13,10 @@ package org.eclipse.ecf.salvo.ui.internal.wizards;
 
 import java.util.Map;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.channel.model.IServerConnection;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
@@ -197,7 +197,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 	}
 
 	private void fillDialog() {
-		INNTPServer server = ((NewNewsServerWizard) getWizard()).getServer();
+		IServer server = ((NewNewsServerWizard) getWizard()).getServer();
 		if (server == null) {
 			return;
 		}

@@ -14,6 +14,7 @@ package org.eclipse.ecf.salvo.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.resources.ISalvoResource;
 import org.eclipse.ecf.salvo.ui.tools.SelectionUtil;
@@ -29,7 +30,7 @@ public class ChangeServer extends AbstractHandler {
 		ISalvoResource resource = (ISalvoResource) SelectionUtil.getFirstObjectFromSelection(HandlerUtil
 				.getCurrentSelection(event), ISalvoResource.class);
 		if (resource.getObject() instanceof INNTPServer) {
-			NewNewsServerWizard wizard = new NewNewsServerWizard((INNTPServer) resource.getObject());
+			NewNewsServerWizard wizard = new NewNewsServerWizard((IServer) resource.getObject());
 			WizardDialog dialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
 			dialog.create();
 			dialog.open();

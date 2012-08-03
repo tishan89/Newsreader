@@ -12,7 +12,7 @@
 package org.eclipse.ecf.salvo.ui.internal;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.salvo.ui.internal.adapters.ArticlePropertySourceAdapter;
 import org.eclipse.ecf.salvo.ui.internal.adapters.GenericPropertySourceAdapter;

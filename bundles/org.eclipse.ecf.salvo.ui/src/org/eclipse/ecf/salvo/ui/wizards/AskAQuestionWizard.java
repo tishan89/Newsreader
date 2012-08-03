@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
-import org.eclipse.ecf.protocol.nntp.core.Debug;
+import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
-import org.eclipse.ecf.salvo.ui.internal.wizards.ComposeNewArticleWizardPage;
+import org.eclipse.ecf.salvo.ui.internal.wizards.ComposeNewMessageWizardPage;
 import org.eclipse.ecf.salvo.ui.internal.wizards.SelectNewsgroupWizardPage;
 import org.eclipse.ecf.salvo.ui.tools.PreferencesUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,10 +29,12 @@ import org.eclipse.jface.wizard.Wizard;
  * @author isuru
  * 
  */
+
+//  class needs to be changed to match with new API
 public class AskAQuestionWizard extends Wizard {
 
 	private SelectNewsgroupWizardPage selectNewsgroupWizardPage;
-	private ComposeNewArticleWizardPage composeNewArticleWizardPage;
+	private ComposeNewMessageWizardPage composeNewArticleWizardPage;
 
 	public AskAQuestionWizard() {
 		super();
@@ -42,7 +45,7 @@ public class AskAQuestionWizard extends Wizard {
 	@Override
 	public void addPages() {
 		selectNewsgroupWizardPage = new SelectNewsgroupWizardPage();
-		composeNewArticleWizardPage = new ComposeNewArticleWizardPage();
+		composeNewArticleWizardPage = new ComposeNewMessageWizardPage();
 		addPage(selectNewsgroupWizardPage);
 		addPage(composeNewArticleWizardPage);
 
@@ -59,13 +62,13 @@ public class AskAQuestionWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 
-		INewsgroup group = selectNewsgroupWizardPage.getSelectedNewsgroup();
+		IMessageSource group = selectNewsgroupWizardPage.getSelectedNewsgroup();
 
 		if (group != null) {
 
 			// Saving preferences
 			PreferencesUtil.instance().savePluginSettings(
-					"recentSelectedNewsgroup", group.getNewsgroupName());
+					"recentSelectedNewsgroup", group.getMessageSourceName());
 			PreferencesUtil.instance().savePluginSettings(
 					"recentSelectedServer", group.getServer().getAddress());
 
@@ -77,20 +80,20 @@ public class AskAQuestionWizard extends Wizard {
 			try {
 
 				// posting article
-				serverStoreFacade.postNewArticle(new INewsgroup[] { group },
+				serverStoreFacade.postNewArticle(new INewsgroup[] { (INewsgroup)group },
 						subject, body);
 
 				// Subscribe newsgroup
 				if (!group.isSubscribed()
 						&& composeNewArticleWizardPage.doSubscribe()) {
-					serverStoreFacade.subscribeNewsgroup(group);
+					serverStoreFacade.subscribeNewsgroup((INewsgroup)group);
 				}
 
 				MessageDialog.openInformation(
 						getShell(),
 						"Article Posted",
 						"Your question is posted to "
-								+ group.getNewsgroupName());
+								+ group.getMessageSourceName());
 
 			} catch (NNTPException e) {
 				MessageDialog.openError(
