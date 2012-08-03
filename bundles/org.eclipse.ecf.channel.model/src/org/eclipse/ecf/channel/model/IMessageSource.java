@@ -30,5 +30,7 @@ public interface IMessageSource extends IProperties, ISubscribable,
 	 * @return the string that makes this messageSource unique
 	 */
 	public String getURL();
+	
+	public String getMessageSourceName();
 
 }

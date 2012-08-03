@@ -1,7 +1,7 @@
 package org.eclipse.ecf.provider.nntp.security;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.ISecureStore;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.equinox.security.storage.ISecurePreferences;
 import org.eclipse.equinox.security.storage.SecurePreferencesFactory;

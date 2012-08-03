@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.ISecureStore;
@@ -29,7 +30,6 @@ import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.channel.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;

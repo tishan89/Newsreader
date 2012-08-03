@@ -123,7 +123,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 	}
 
-	public IMessageSource[] listMessageSources(IServer server) throws Exception {
+	public IMessageSource[] listMessageSources(INNTPServer server) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -154,6 +154,11 @@ public class NNTPServerContainer extends AbstractContainer implements
 			serverStoreFacade.subscribeNewsgroup(group);
 		
 	}
+	}
+
+	public IMessageSource[] listMessageSources(IServer server) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -12,9 +12,9 @@
 package org.eclipse.ecf.salvo.ui.navigator.internal.views;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IStoreEvent;
 import org.eclipse.ecf.channel.model.IStoreEventListener;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StoreStore;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;

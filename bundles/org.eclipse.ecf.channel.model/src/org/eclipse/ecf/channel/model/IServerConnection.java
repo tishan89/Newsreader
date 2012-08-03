@@ -112,5 +112,11 @@ public interface IServerConnection {
 	 * @return the full user name
 	 */
 	public String getFullUserName();
+	
+	public void setLastResponse(String lastResponse);
+	
+	public void setPossibleResponseAvailable(boolean b);	
+	
+	public boolean isPossibleResponseAvailable() ;
 
 }

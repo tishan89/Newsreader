@@ -10,3 +10,4 @@ Import-Package: org.eclipse.ecf.channel.model,
  org.eclipse.ecf.protocol.nntp.model;version="0.6.0",
  org.eclipse.equinox.security.storage;version="1.0.0"
 Export-Package: org.eclipse.ecf.provider.nntp.security
+Require-Bundle: org.eclipse.ecf.channel.core;bundle-version="1.0.0"

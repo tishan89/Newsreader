@@ -1,5 +1,6 @@
 package org.eclipse.ecf.provider.ui.wizards;
 
+import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.core.IContainerListener;
 import org.eclipse.ecf.core.events.IContainerConnectedEvent;
@@ -34,7 +35,7 @@ public class NewNewsServerConnectWizard extends NewNewsServerWizard implements
 		// TODO Auto-generated constructor stub
 	}
 
-	public NewNewsServerConnectWizard(INNTPServer server) {
+	public NewNewsServerConnectWizard(IServer server) {
 		super(server);
 		// TODO Auto-generated constructor stub
 	}
@@ -58,7 +59,7 @@ public class NewNewsServerConnectWizard extends NewNewsServerWizard implements
 
 		try {
 			connectID = page1.getServer().getURL();
-			((NNTPServerContainer) container).setServer(page1.getServer());
+			((NNTPServerContainer) container).setServer((INNTPServer)page1.getServer());
 		} catch (NNTPException e1) {
 			new IDCreateErrorDialog(null, connectID, new IDCreateException(e1))
 					.open();

@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.newsgroupprovider.test;
 
-import org.eclipse.ecf.salvo.ui.external.provider.INewsGroupProvider;
+import org.eclipse.ecf.salvo.ui.external.provider.IMessageSourceProvider;
 
 
-public class TestNewsgroupProvider implements INewsGroupProvider {
+public class TestNewsgroupProvider implements IMessageSourceProvider {
 
 	private String user;
 	private String password;

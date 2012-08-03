@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.ecf.samples.nntp;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.ICredentials;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;

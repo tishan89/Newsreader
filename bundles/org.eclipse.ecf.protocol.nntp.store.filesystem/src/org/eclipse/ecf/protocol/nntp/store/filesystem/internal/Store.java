@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.channel.model.ICredentials;
 import org.eclipse.ecf.channel.model.IMessage;
@@ -41,7 +42,6 @@ import org.eclipse.ecf.channel.model.IStoreEventListener;
 import org.eclipse.ecf.channel.model.StoreEvent;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.DateParser;
-import org.eclipse.ecf.protocol.nntp.core.Debug;
 import org.eclipse.ecf.protocol.nntp.core.NewsgroupFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
