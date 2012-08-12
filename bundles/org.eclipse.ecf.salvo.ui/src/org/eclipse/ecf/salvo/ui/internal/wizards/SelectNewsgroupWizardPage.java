@@ -13,14 +13,18 @@ package org.eclipse.ecf.salvo.ui.internal.wizards;
 
 import java.util.ArrayList;
 
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
 import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.provider.IMessageSourceProvider;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
-import org.eclipse.ecf.salvo.ui.external.provider.HookedNewsgroupProvider;
-import org.eclipse.ecf.salvo.ui.external.provider.IMessageSourceProvider;
+import org.eclipse.ecf.provider.nntp.internal.HookedNewsgroupProvider;
 import org.eclipse.ecf.salvo.ui.tools.ImageUtils;
 import org.eclipse.ecf.salvo.ui.tools.PreferencesUtil;
 import org.eclipse.jface.wizard.WizardPage;
@@ -37,6 +41,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class SelectNewsgroupWizardPage extends WizardPage {
 
@@ -48,13 +55,16 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 	private Combo cboSuggestedNewgroups;
 	private IMessageSourceProvider[] hookedMessageSourceProviders;
 	private Label lblSuggested;
+	private IContainer iContainer;
+	private IChannelContainerAdapter adaptor;
+	private boolean hookedMessageSourceAvailable = false;
 
 	public SelectNewsgroupWizardPage() {
 		super("Select Newsgroup");
 		setTitle("Select Newsgroup");
 		setDescription("Select the Newsgroup you want to ask the question");
-		initHookedNewsgroupsProviders();
-		fetchSubscribedNewsgroups();
+		initHookedMessageSourceProviders();
+		fetchSubscribedMessageSources();
 		setImageDescriptor(ImageUtils.getInstance().getImageDescriptor(
 				"selectnewsgroup.png"));
 	}
@@ -77,12 +87,14 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 				cboSuggestedNewgroups = new Combo(container, SWT.READ_ONLY);
 				cboSuggestedNewgroups.setLayoutData(new GridData(SWT.FILL,
 						SWT.CENTER, true, false, 1, 1));
+				
 				fillCboSuggestedNewsgroups();
 				cboSuggestedNewgroups.select(0);
 			}
 		}
 
-		if (isHookedMessageSourceAvailable() && isSubscribedNewsgroupsAvailable()) {
+		if (isHookedMessageSourceAvailable()
+				&& isSubscribedNewsgroupsAvailable()) {
 			// Checkbox
 			{
 				btnCheckPickSubscribed = new Button(container, SWT.CHECK);
@@ -132,13 +144,14 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 			{
 				messageSourceList = new List(container, SWT.SINGLE | SWT.BORDER
 						| SWT.V_SCROLL);
-				messageSourceList.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-						true, true, 1, 1));
+				messageSourceList.setLayoutData(new GridData(SWT.FILL,
+						SWT.FILL, true, true, 1, 1));
 				initNewsgroupList();
 			}
 		}
 
-		if (isHookedMessageSourceAvailable() && isSubscribedNewsgroupsAvailable()) {
+		if (isHookedMessageSourceAvailable()
+				&& isSubscribedNewsgroupsAvailable()) {
 			cboSuggestedNewgroups.setEnabled(true);
 			btnCheckPickSubscribed.setSelection(false);
 			messageSourceList.setEnabled(false);
@@ -159,11 +172,13 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 	 * Fill CboSugesstedNewsgroups combo box
 	 */
 	private void fillCboSuggestedNewsgroups() {
+
 		for (IMessageSourceProvider messageSourceProvider : hookedMessageSourceProviders) {
 
 			String messageSourceName = messageSourceProvider.getNewsgroupName();
 			String serverAddress = messageSourceProvider.getServerAddress();
-			String description = messageSourceProvider.getNewsgroupDescription();
+			String description = messageSourceProvider
+					.getNewsgroupDescription();
 
 			cboSuggestedNewgroups.add(messageSourceName + "  (Server: "
 					+ serverAddress + ") -  " + description);
@@ -172,7 +187,7 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 
 	/**
 	 * Initialize MessagrSourceList for the first time with all the available
-	 * newsgroups
+	 * message sources
 	 */
 	private void initNewsgroupList() {
 
@@ -186,16 +201,16 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 
 		for (int i = 0, size = subscribedMessageSources.size(); i < size; i++) {
 
-			String newsgroupName = subscribedMessageSources.get(i)
+			String messageSourceName = subscribedMessageSources.get(i)
 					.getMessageSourceName();
 			String serverAddress = subscribedMessageSources.get(i).getServer()
 					.getAddress();
 
-			messageSourceList.add(newsgroupName + "  (Server: " + serverAddress
+			messageSourceList.add(messageSourceName + "  (Server: " + serverAddress
 					+ ")");
 
 			// calculate the recently selected item from the list
-			if (newsgroupName.equals(recentlySelectedNewsgroup)
+			if (messageSourceName.equals(recentlySelectedNewsgroup)
 					&& serverAddress.equals(recentlySelectedServer)) {
 				selectionIndex = i;
 			}
@@ -216,18 +231,18 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 				String newsgroupName = source.getMessageSourceName();
 				String serverAddress = source.getServer().getAddress();
 
-				messageSourceList.add(newsgroupName + "  (Server: " + serverAddress
-						+ ")");
+				messageSourceList.add(newsgroupName + "  (Server: "
+						+ serverAddress + ")");
 			}
 		}
 		messageSourceList.select(0);
 	}
 
 	/**
-	 * Match whether the given newsgroup is match with the filter.
+	 * Match whether the given message source is match with the filter.
 	 * 
-	 * @param newsgroupName
-	 *            Name of the newsgroup
+	 * @param messageSourceName
+	 *            Name of the newsgroup/forum
 	 * @return whether the newsgroup is match with the filter
 	 */
 	private boolean matchPattern(String newsgroupName) {
@@ -246,7 +261,7 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Get the selected Newsgroup from the list
+	 * Get the selected source(Newsgroup/forum) from the list
 	 * 
 	 * @return selected Source
 	 */
@@ -254,7 +269,8 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 
 		IMessageSource resultMessageSource = null;
 
-		if (isHookedMessageSourceAvailable() && isSubscribedNewsgroupsAvailable()) {
+		if (isHookedMessageSourceAvailable()
+				&& isSubscribedNewsgroupsAvailable()) {
 			if (btnCheckPickSubscribed.getSelection()) {
 				resultMessageSource = getSelectedSubscribedMessageSource();
 			} else {
@@ -270,22 +286,20 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Get the selected hooked newsgroup
+	 * Get the selected hooked messageSource
 	 */
-	// TODO change INewsGroupProvider
-	private INewsgroup getSelectedHookedNewsgroup() {
-		INewsgroup resultNewsgroup = null;
+	
+	private IMessageSource getSelectedHookedNewsgroup() {
+		IMessageSource resultNewsgroup = null;
 
 		IMessageSourceProvider provider = hookedMessageSourceProviders[cboSuggestedNewgroups
 				.getSelectionIndex()];
 		if (!HookedNewsgroupProvider.instance().isServerSubscribed(provider)) {
 			if (provider.initCredentials()) {
-				resultNewsgroup = HookedNewsgroupProvider.instance()
-						.getNewsgroup(provider);
+				resultNewsgroup = adaptor.getMessageSource(provider);
 			}
 		} else {
-			resultNewsgroup = HookedNewsgroupProvider.instance().getNewsgroup(
-					provider);
+			resultNewsgroup = adaptor.getMessageSource(provider);;
 		}
 		return resultNewsgroup;
 	}
@@ -319,43 +333,38 @@ public class SelectNewsgroupWizardPage extends WizardPage {
 	}
 
 	/**
-	 * Fetch all subscribed newsgroups from the store
+	 * Fetch all subscribed message sources from the store
 	 */
-	private void fetchSubscribedNewsgroups() {
+	private void fetchSubscribedMessageSources() {
 
-		subscribedMessageSources = new ArrayList<IMessageSource>();
-
-		try {
-			for (INNTPServer server : NNTPServerStoreFactory.instance()
-					.getServerStoreFacade().getFirstStore().getServers()) {
-
-				INewsgroup[] groups = NNTPServerStoreFactory.instance()
-						.getServerStoreFacade().getSubscribedNewsgroups(server);
-
-				for (INewsgroup group : groups) {
-
-					if (!subscribedMessageSources.contains(group)) {
-						subscribedMessageSources.add(group);
-					}
-				}
-
-			}
-		} catch (NNTPException e) {
-			Debug.log(this.getClass(), e);
-		}
+		subscribedMessageSources = adaptor.fetchSubcribedMessageSources();
 
 	}
 
 	/**
 	 * initialize hooked newsgroup providers
 	 */
-	private void initHookedNewsgroupsProviders() {
-		hookedMessageSourceProviders = HookedNewsgroupProvider.instance()
-				.getProviders();
+	private void initHookedMessageSourceProviders() {
+		setupContainer();
+		hookedMessageSourceProviders = adaptor.getProviders();
+		hookedMessageSourceAvailable = true;
+
+	}
+
+	private void setupContainer() {
+		BundleContext context = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		SalvoUtil salvoUtil = (SalvoUtil) context.getService(reference);
+		this.iContainer = salvoUtil.getDefault().getContainerManager()
+				.getAllContainers()[0];
+		adaptor = (IChannelContainerAdapter) iContainer
+				.getAdapter(IChannelContainerAdapter.class);
 	}
 
 	/**
-	 * check whether subscribed newsgroups available
+	 * check whether subscribed message sources available
 	 */
 	private boolean isSubscribedNewsgroupsAvailable() {
 		if (subscribedMessageSources.size() == 0) {

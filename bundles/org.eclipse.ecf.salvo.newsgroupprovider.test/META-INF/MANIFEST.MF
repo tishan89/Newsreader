@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eclipse.ecf.salvo.newsgroupprovider.test;singleton:=tru
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.ecf.salvo.newsgroupprovider.test.Activator
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.ecf.salvo.ui
+ org.eclipse.ecf.salvo.ui,
+ org.eclipse.ecf.channel;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

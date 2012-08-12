@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.newsgroupprovider.test;
 
-import org.eclipse.ecf.salvo.ui.external.provider.IMessageSourceProvider;
+import org.eclipse.ecf.channel.provider.IMessageSourceProvider;
 
 
 public class TestNewsgroupProvider implements IMessageSourceProvider {

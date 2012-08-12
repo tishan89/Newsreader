@@ -11,6 +11,7 @@ import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.channel.model.IServerConnection;
 
 public class ServerFactory {
+	private ServerType type;
 	private static HashMap servers = new HashMap();
 
 	public static IServer getServer(String address, int port,
@@ -22,11 +23,11 @@ public class ServerFactory {
 	}
 
 	public static IServer getCreateServer(String address, int port,
-			ICredentials credentials, boolean secure) throws Exception {
+			ICredentials credentials, boolean secure) {
 
-		IServer server = (IServer) servers.get(address + "::" + port
-				+ "::" + credentials.getUser() + "::" + credentials.getEmail()
-				+ "::" + credentials.getLogin() + "::" + secure);
+		IServer server = (IServer) servers.get(address + "::" + port + "::"
+				+ credentials.getUser() + "::" + credentials.getEmail() + "::"
+				+ credentials.getLogin() + "::" + secure);
 
 		if (server != null) {
 			server.getServerConnection().setCredentials(credentials);
@@ -47,10 +48,18 @@ public class ServerFactory {
 
 		servers.put(server.toString(), server);
 		return server;
+
 	}
 
-	public static IMessageSource getMessageSource(IServer server, String source,
-			String description) {
-		return new MessageSource(server, source, description);
+	private void setServerType(String address) {
+		if (address.split(":")[0].contains("nntp")) {
+			type = ServerType.NNTP;
+		}
 	}
+
+	/*
+	 * public static IMessageSource getMessageSource(IServer server, String
+	 * source, String description) { return new MessageSource(server, source,
+	 * description); }
+	 */
 }

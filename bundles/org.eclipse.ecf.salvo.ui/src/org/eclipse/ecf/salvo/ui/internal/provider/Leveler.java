@@ -16,6 +16,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 
@@ -25,7 +27,7 @@ public class Leveler {
 	private HashMap<String, Leveler> serverLevelers = new HashMap<String, Leveler>();
 
 	private HashMap<String, Leveler> groupLevelers = new HashMap<String, Leveler>();
-	private HashMap<String, INewsgroup> groups = new HashMap<String, INewsgroup>();
+	private HashMap<String, IMessageSource> groups = new HashMap<String, IMessageSource>();
 
 	private final Leveler parent;
 
@@ -67,16 +69,16 @@ public class Leveler {
 	 * @param group
 	 * @param level
 	 */
-	private void storeDeep(Leveler parent, INewsgroup group, int level) {
+	private void storeDeep(Leveler parent, IMessageSource group, int level) {
 
-		StringTokenizer tizer = new StringTokenizer(group.getNewsgroupName(), ".");
+		StringTokenizer tizer = new StringTokenizer(group.getMessageSourceName(), ".");
 		int tokens = tizer.countTokens();
 		if (tokens < level) {
 			return;
 		}
 
 		if (level == tokens) {
-			groups.put(group.getNewsgroupName(), group);
+			groups.put(group.getMessageSourceName(), group);
 		} else {
 
 			Leveler leveler = groupLevelers.get(getLevelText(group, level));
@@ -84,26 +86,26 @@ public class Leveler {
 				leveler = new Leveler(this);
 				leveler.setLevelText(group, level);
 				groupLevelers.put(leveler.getLevelText(), leveler);
-				INewsgroup topGroup = groups.get(leveler.getLevelText());
+				IMessageSource topGroup = groups.get(leveler.getLevelText());
 				if (topGroup != null) {
 					leveler.putGroup(topGroup);
-					groups.remove(topGroup.getNewsgroupName());
+					groups.remove(topGroup.getMessageSourceName());
 				}
 			}
 			leveler.storeDeep(this, group, level + 1);
 		}
 	}
 
-	private void putGroup(INewsgroup group) {
-		groups.put(group.getNewsgroupName(), group);
+	private void putGroup(IMessageSource group) {
+		groups.put(group.getMessageSourceName(), group);
 	}
 
-	protected void removeGroup(INewsgroup group) {
-		groups.remove(group.getNewsgroupName());
+	protected void removeGroup(IMessageSource group) {
+		groups.remove(group.getMessageSourceName());
 	}
 
-	private String getLevelText(INewsgroup group, int level) {
-		StringTokenizer tizer = new StringTokenizer(group.getNewsgroupName(), ".");
+	private String getLevelText(IMessageSource group, int level) {
+		StringTokenizer tizer = new StringTokenizer(group.getMessageSourceName(), ".");
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < level; i++) {
 			if (i > 0) {
@@ -119,11 +121,11 @@ public class Leveler {
 		return levelText;
 	}
 
-	private void setLevelText(INewsgroup group, int level) {
+	private void setLevelText(IMessageSource group, int level) {
 		this.levelText = getLevelText(group, level);
 	}
 
-	private Leveler getServerLeveler(INNTPServer server) {
+	private Leveler getServerLeveler(IServer server) {
 		String serverKey = server.getAddress() + ":" + server.getPort();
 		Leveler serverLeveler = serverLevelers.get(serverKey);
 		if (serverLeveler == null) {
@@ -137,15 +139,15 @@ public class Leveler {
 		return parent;
 	}
 
-	public Collection<Object> getChildren(INNTPServer server) {
+	public Collection<Object> getChildren(IServer server) {
 
 		ArrayList<Object> result = new ArrayList<Object>();
 		result.addAll(getServerLeveler(server).getLevelers());
-		result.addAll(getServerLeveler(server).getNewsGroups());
+		result.addAll(getServerLeveler(server).getMessageSource());
 		return result;
 	}
 
-	private Collection<INewsgroup> getNewsGroups() {
+	private Collection<IMessageSource> getMessageSource() {
 		return groups.values();
 	}
 
@@ -156,7 +158,7 @@ public class Leveler {
 	public Collection<Object> getChildren() {
 		ArrayList<Object> result = new ArrayList<Object>();
 		result.addAll(getLevelers());
-		result.addAll(getNewsGroups());
+		result.addAll(getMessageSource());
 		return result;
 	}
 }

@@ -23,6 +23,7 @@ import java.util.StringTokenizer;
 import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.core.internal.ServerConnection;
 import org.eclipse.ecf.channel.model.ICredentials;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.core.ArticleFactory;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
@@ -37,7 +38,8 @@ import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.model.TimeoutException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
-public class NNTPServerConnection extends ServerConnection implements INNTPServerConnection {
+public class NNTPServerConnection extends ServerConnection implements
+		INNTPServerConnection {
 
 	private Socket socket;
 
@@ -58,7 +60,7 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 			"591 No input received within " + TIMEOUTSECONDS + " seconds \r\n",
 			".\r\n" };
 
-	private ICredentials credentials; 
+	private ICredentials credentials;
 
 	private int batchSize;
 
@@ -70,7 +72,6 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 
 	public String getResponse() throws NNTPIOException {
 
-		
 		try {
 			StringBuffer buffer = new StringBuffer();
 			if (waitForInput()) {
@@ -140,7 +141,6 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 	 * @return true if input is on the queue, false otherwise.
 	 */
 
-
 	public void disconnect() throws NNTPConnectException {
 
 		try {
@@ -166,9 +166,9 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 	public void sendCommand(String command) throws NNTPIOException,
 			UnexpectedResponseException {
 
-		try{
+		try {
 			super.sendCommand(command);
-		}catch(Exception e1){
+		} catch (Exception e1) {
 			throw new NNTPIOException("Could not send command due to "
 					+ e1.getMessage(), e1);
 		}
@@ -244,7 +244,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 						socket.getOutputStream().write(
 								(command + SALVO.CRLF).getBytes());
 					} catch (IOException e1) {
-						Debug.log(this.getClass(),
+						Debug.log(
+								this.getClass(),
 								"Could not send command due to "
 										+ e1.getMessage());
 						throw new NNTPIOException(
@@ -267,7 +268,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 						socket.getOutputStream().write(
 								(command + SALVO.CRLF).getBytes());
 					} catch (IOException e1) {
-						Debug.log(this.getClass(),
+						Debug.log(
+								this.getClass(),
 								"Could not send command due to "
 										+ e1.getMessage());
 						throw new NNTPIOException(
@@ -306,8 +308,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 
 	}
 
-	public INewsgroup[] listNewsgroups(INNTPServer server) throws NNTPIOException,
-			UnexpectedResponseException {
+	public INewsgroup[] listNewsgroups(INNTPServer server)
+			throws NNTPIOException, UnexpectedResponseException {
 
 		sendCommand("list newsgroups");
 
@@ -411,8 +413,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 		return (IArticle[]) reversed.toArray(new IArticle[reversed.size()]);
 	}
 
-	public String[] getOverviewHeaders(INNTPServer server) throws NNTPIOException,
-			UnexpectedResponseException {
+	public String[] getOverviewHeaders(INNTPServer server)
+			throws NNTPIOException, UnexpectedResponseException {
 
 		/*
 		 * Get from the server if stored
@@ -466,7 +468,7 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 		String response = getResponse();
 
 		// 211 39270 1 39301 eclipse.tools.emf
-		// 
+		//
 		if (response == null || response.startsWith("411")) {
 			newsgroup.setAttributes(0, 0, 0);
 			return;
@@ -481,13 +483,14 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 
 		String[] elements = StringUtils.split(response, SALVO.SPACE);
 		if (elements.length == 5) {
-			newsgroup.setAttributes(Integer.parseInt(elements[1]), Integer
-					.parseInt(elements[2]), Integer.parseInt(elements[3]));
+			newsgroup.setAttributes(Integer.parseInt(elements[1]),
+					Integer.parseInt(elements[2]),
+					Integer.parseInt(elements[3]));
 			return;
 		} else
 			newsgroup.setAttributes(0, 0, 0);
 	}
-	
+
 	public String[] getArticleBody(IArticle article) throws NNTPIOException,
 			UnexpectedResponseException {
 
@@ -570,8 +573,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 		return (IArticle[]) result.toArray(new IArticle[result.size()]);
 	}
 
-	public void replyToArticle(String replySubject, IArticle article, String body)
-			throws NNTPIOException, UnexpectedResponseException {
+	public void replyToArticle(String replySubject, IArticle article,
+			String body) throws NNTPIOException, UnexpectedResponseException {
 		try {
 
 			// flush();
@@ -719,8 +722,8 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 	public String getUser() {
 		return credentials.getUser();
 	}
-	
-	public String getFullUserName(){
+
+	public String getFullUserName() {
 		return getUser() + " <" + getEmail() + ">";
 	}
 
@@ -759,13 +762,15 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 	}
 
 	public int purge(Calendar purgeDate, int number) throws NNTPIOException {
-		throw new NNTPIOException("You cannot remove articles from the server, use cancelArticle()");
+		throw new NNTPIOException(
+				"You cannot remove articles from the server, use cancelArticle()");
 	}
 
 	public int delete(IArticle article) throws NNTPIOException {
-		throw new NNTPIOException("You cannot remove articles from the server, use cancelArticle()");
+		throw new NNTPIOException(
+				"You cannot remove articles from the server, use cancelArticle()");
 	}
-	
+
 	public int[] getWaterMarks(INewsgroup newsgroup) throws NNTPIOException,
 			UnexpectedResponseException {
 
@@ -773,10 +778,10 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 		String response = getResponse();
 
 		// 211 39270 1 39301 eclipse.tools.emf
-		// 
+		//
 		if (response == null || response.startsWith("411")) {
 			newsgroup.setAttributes(0, 0, 0);
-			return new int[] {0,0,0};
+			return new int[] { 0, 0, 0 };
 		}
 
 		if (!response.startsWith("211"))
@@ -788,12 +793,22 @@ public class NNTPServerConnection extends ServerConnection implements INNTPServe
 
 		String[] elements = StringUtils.split(response, SALVO.SPACE);
 		if (elements.length == 5) {
-			newsgroup.setAttributes(Integer.parseInt(elements[1]), Integer
-					.parseInt(elements[2]), Integer.parseInt(elements[3]));
-			return new int[] {Integer.parseInt(elements[1]),Integer.parseInt(elements[2]),Integer.parseInt(elements[3])};
+			newsgroup.setAttributes(Integer.parseInt(elements[1]),
+					Integer.parseInt(elements[2]),
+					Integer.parseInt(elements[3]));
+			return new int[] { Integer.parseInt(elements[1]),
+					Integer.parseInt(elements[2]),
+					Integer.parseInt(elements[3]) };
 		} else
 			newsgroup.setAttributes(0, 0, 0);
-			return new int[] {0,0,0};
+		return new int[] { 0, 0, 0 };
 	}
-	
+
+	@Override
+	public IMessageSource[] getMessageSource() throws NNTPIOException,
+			UnexpectedResponseException {
+
+		return getNewsgroups();
+
+	}
 }

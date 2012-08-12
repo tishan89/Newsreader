@@ -31,6 +31,8 @@ public class Server implements IServer
 	private boolean initialized;
 	
 	
+	
+	
 	/**
 	 * This is the concrete implementation of IServer. To be used internally.
 	 * @param address

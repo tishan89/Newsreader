@@ -10,6 +10,7 @@ package org.eclipse.ecf.channel.core;
 import org.eclipse.ecf.core.IContainerManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.framework.FrameworkUtil;
 
@@ -18,7 +19,7 @@ import org.osgi.framework.FrameworkUtil;
  * this class and then get the relevant utilities by using this class.
  * 
  */
-public class SalvoUtil {
+public class SalvoUtil implements ISalvoUtil {
 
 	private ServiceTracker containerManagerTracker;
 	private IContainerManager containerManager;
@@ -31,18 +32,16 @@ public class SalvoUtil {
 	 * called. Constructor will initialize IContainerManager and make it usable
 	 * for others.
 	 */
-	private SalvoUtil() {
+	public SalvoUtil() {
 		if (containerManagerTracker == null) {
-			containerManagerBundle = FrameworkUtil
-					.getBundle(org.eclipse.ecf.core.IContainerManager.class);
-			context = containerManagerBundle.getBundleContext();
-			containerManagerTracker = new ServiceTracker(context,
-					IContainerManager.class.getName(), null);
-			containerManagerTracker.open();
-		}
-		containerManager = (IContainerManager) containerManagerTracker
-				.getService();
 
+			context = FrameworkUtil.getBundle(this.getClass())
+					.getBundleContext();
+			ServiceReference reference = context
+					.getServiceReference(IContainerManager.class.getName());
+			containerManager = (IContainerManager) context
+					.getService(reference);
+		}
 	}
 
 	/**
@@ -62,7 +61,9 @@ public class SalvoUtil {
 	 * @return IContainerManager
 	 */
 	public IContainerManager getContainerManager() {
+		if(containerManager != null)
 		return containerManager;
+		return null;
 	}
 
 }

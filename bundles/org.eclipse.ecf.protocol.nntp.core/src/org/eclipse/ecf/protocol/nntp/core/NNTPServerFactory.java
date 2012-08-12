@@ -22,7 +22,7 @@ import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 
-public class NNTPServerFactory {
+public class NNTPServerFactory{
 
 	private static HashMap servers = new HashMap();
 

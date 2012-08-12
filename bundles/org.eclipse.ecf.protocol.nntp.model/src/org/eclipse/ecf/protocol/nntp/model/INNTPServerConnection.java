@@ -51,13 +51,7 @@ public interface INNTPServerConnection extends IBasicNNTPInterface,
 	 */
 	public void disconnect() throws NNTPConnectException;
 
-	/**
-	 * @return the array of all {@link INewsgroup}s found on this server.
-	 * @throws NNTPIOException
-	 * @throws UnexpectedResponseException
-	 */
-	public INewsgroup[] getNewsgroups() throws NNTPIOException,
-			UnexpectedResponseException;
+	
 
 	/**
 	 * Sends a command to the server returns true if the command was send in

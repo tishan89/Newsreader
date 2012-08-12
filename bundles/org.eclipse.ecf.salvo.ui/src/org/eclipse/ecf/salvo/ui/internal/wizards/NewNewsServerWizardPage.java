@@ -11,12 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.internal.wizards;
 
-import java.util.Map;
-
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.core.ServerFactory;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.channel.model.IServer;
-import org.eclipse.ecf.channel.model.IServerConnection;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerConnection;
@@ -234,20 +232,22 @@ public class NewNewsServerWizardPage extends WizardPage {
 
 					public void run() {
 						setErrorMessage(null);
+						if (v_address.split(":")[0].contains("nntp")) {
+							try {
 
-						try {
-							INNTPServer server = NNTPServerFactory
-									.getCreateServer(v_address, v_port,
-											credentials, v_secure);
-							INNTPServerConnection connection = server
-									.getServerConnection();
-							connection.disconnect();
-							connection.connect();
-							connection.setModeReader(server);
-							connection.getOverviewHeaders(server);
-						} catch (NNTPException e) {
-							message.append(e.getMessage());
-							Debug.log(getClass(), e);
+								INNTPServer server = NNTPServerFactory
+										.getCreateServer(v_address, v_port,
+												credentials, v_secure);
+								INNTPServerConnection connection = server
+										.getServerConnection();
+								connection.disconnect();
+								connection.connect();
+								connection.setModeReader(server);
+								connection.getOverviewHeaders(server);
+							} catch (NNTPException e) {
+								message.append(e.getMessage());
+								Debug.log(getClass(), e);
+							}
 						}
 
 					}
@@ -321,93 +321,11 @@ public class NewNewsServerWizardPage extends WizardPage {
 		return null;
 	}
 
-	/*
-	 * Have to change the server factory.
-	 * Under Construction.
-	 */
-
 	public IServer getServer() throws NNTPException {
 		AbstractCredentials credentials = new AbstractCredentials(getUser(),
 				getEmail(), getLogin(), getPass());
-		IServer server = new IServer() {
-			private boolean subcribed = false;
-			private IServerConnection serverConnection;
-			private boolean isSecure = false;
-
-			public void setSubscribed(boolean subscribe) {
-				this.subcribed = subscribe;
-			}
-
-			public boolean isSubscribed() {
-
-				return this.subcribed;
-			}
-
-			public void setProperty(String key, String value) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public String getProperty(String key) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public Map getProperties() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public void setServerConnection(IServerConnection connection) {
-				this.serverConnection = connection;
-
-			}
-
-			public boolean isSecure() {
-				return this.isSecure;
-			}
-
-			public boolean isInitialized() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			public boolean isAnonymous() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			public void init() throws Exception {
-				// TODO Auto-generated method stub
-
-			}
-
-			public String getURL() {
-				return getLogin();
-			}
-
-			public IServerConnection getServerConnection() {
-				return this.serverConnection;
-			}
-
-			public int getPort() {
-				return getPort();
-			}
-
-			public String getOrganization() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public String getID() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public String getAddress() {
-				return getAddress();
-			}
-		};
+		IServer server = ServerFactory.getCreateServer(getAddress(), getPort(),
+				credentials, isSecure());
 
 		return server;
 	}

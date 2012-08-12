@@ -4,22 +4,33 @@ import java.io.IOException;
 import java.net.Socket;
 
 import org.eclipse.ecf.channel.model.ICredentials;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.channel.model.IServerConnection;
 import org.eclipse.ecf.channel.core.Debug;
 
 
+/**
+ * 
+ * Do not extend this class ever. 
+ * This class is not complete and implemented for the sole purpose of
+ * carrying a general ServerConnection.
+ * 
+ *
+ */
 public class ServerConnection implements IServerConnection{
 	private IServer server;
 	private Socket socket;
 	private boolean possibleResponseAvailable;
 	private String lastResponse;
+	private ICredentials credentials;
 	
 	public ServerConnection(IServer server) {
 		this.server = server;
 		server.setServerConnection(this);
 	}
 
+	
 	@Override
 	public void connect() throws Exception{
 		
@@ -110,8 +121,11 @@ public class ServerConnection implements IServerConnection{
 
 	@Override
 	public void setCredentials(ICredentials credentials) {
-		// TODO Auto-generated method stub
+		this.credentials = credentials;
 		
+	}
+	public ICredentials getCredentials(){
+		return this.credentials;
 	}
 
 	@Override
@@ -146,6 +160,16 @@ public class ServerConnection implements IServerConnection{
 
 	@Override
 	public String getResponse() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * This method should be overridden by any extending
+	 * concrete implementation.
+	 */
+	@Override
+	public IMessageSource[] getMessageSource() throws Exception{
 		// TODO Auto-generated method stub
 		return null;
 	}

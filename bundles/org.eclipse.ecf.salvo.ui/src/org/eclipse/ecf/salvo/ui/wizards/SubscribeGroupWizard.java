@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
 import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
@@ -25,12 +29,17 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class SubscribeGroupWizard extends Wizard implements INewWizard {
 
 	private SubscribeGroupWizardPage page1;
 	private final INNTPServer server;
+	private IContainer container;
+	private SalvoUtil salvoUtil;
 
 	public SubscribeGroupWizard(INNTPServer server) {
 		this.server = server;
@@ -44,18 +53,26 @@ public class SubscribeGroupWizard extends Wizard implements INewWizard {
 
 	@Override
 	public boolean performFinish() {
+		BundleContext context = FrameworkUtil.getBundle(
+				this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		salvoUtil = (SalvoUtil) context.getService(reference);
+		container = salvoUtil.getDefault()
+				.getContainerManager().getAllContainers()[0];
 
-		INNTPServerStoreFacade storeFacade = NNTPServerStoreFactory.instance()
-				.getServerStoreFacade();
-		for (IMessageSource group : page1.getGroups()) {
-			try {
-				// TODO temporary fix
-				storeFacade.subscribeNewsgroup((INewsgroup)group);
-			} catch (NNTPException e) {
-				// FIXME handle communication to user
-				Debug.log(getClass(), e);
-			}
+		try {
+			
+			((IChannelContainerAdapter) container
+					.getAdapter(IChannelContainerAdapter.class))
+					.connectToMessageSource(page1.getGroups());
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			Debug.log(getClass(), e);
 		}
+
 		return true;
 	}
 

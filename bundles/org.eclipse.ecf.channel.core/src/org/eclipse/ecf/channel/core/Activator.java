@@ -1,5 +1,6 @@
 package org.eclipse.ecf.channel.core;
 
+import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -27,6 +28,9 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		ISalvoUtil service = new SalvoUtil(); 
+		context.registerService(ISalvoUtil.class.getName(), service, null);
+		System.out.println("SalvoUtil service registered");
 	}
 
 	/*

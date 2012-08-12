@@ -11,8 +11,12 @@
  *******************************************************************************/
 package org.eclipse.ecf.salvo.ui.wizards;
 
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
 import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
@@ -22,6 +26,9 @@ import org.eclipse.ecf.salvo.ui.internal.wizards.SelectNewsgroupWizardPage;
 import org.eclipse.ecf.salvo.ui.tools.PreferencesUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * This class is responsible for providing the "Ask A Question" wizard.
@@ -35,6 +42,8 @@ public class AskAQuestionWizard extends Wizard {
 
 	private SelectNewsgroupWizardPage selectNewsgroupWizardPage;
 	private ComposeNewMessageWizardPage composeNewArticleWizardPage;
+	private IContainer iContainer;
+	private IChannelContainerAdapter adaptor;
 
 	public AskAQuestionWizard() {
 		super();
@@ -74,19 +83,18 @@ public class AskAQuestionWizard extends Wizard {
 
 			String subject = composeNewArticleWizardPage.getSubject();
 			String body = composeNewArticleWizardPage.getBodyText();
-
-			INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
-					.instance().getServerStoreFacade();
+			setupContainer();
+			
 			try {
 
 				// posting article
-				serverStoreFacade.postNewArticle(new INewsgroup[] { (INewsgroup)group },
+				adaptor.postNewMessages(new INewsgroup[] { (INewsgroup)group },
 						subject, body);
 
 				// Subscribe newsgroup
 				if (!group.isSubscribed()
 						&& composeNewArticleWizardPage.doSubscribe()) {
-					serverStoreFacade.subscribeNewsgroup((INewsgroup)group);
+					adaptor.subscribeMessageSource((INewsgroup)group);
 				}
 
 				MessageDialog.openInformation(
@@ -104,12 +112,33 @@ public class AskAQuestionWizard extends Wizard {
 				Debug.log(this.getClass(), e);
 				e.printStackTrace();
 
+			} catch (Exception e) {
+				MessageDialog.openError(
+						getShell(),
+						"Problem posting message",
+						"The message could not be posted. \n\r"
+								+ e.getMessage());
+				Debug.log(this.getClass(), e);
+				e.printStackTrace();
 			}
 		} else {
 			MessageDialog.openError(getShell(), "Problem posting message",
-					"The message could not be posted. \n\r Newsgroup Failure");
+					"The message could not be posted. \n\r Messaage Source Failure");
 		}
 		return true;
+	}
+
+	private void setupContainer() {
+		BundleContext context = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		SalvoUtil salvoUtil = (SalvoUtil) context.getService(reference);
+		this.iContainer = salvoUtil.getDefault().getContainerManager()
+				.getAllContainers()[0];
+		adaptor = (IChannelContainerAdapter) iContainer
+				.getAdapter(IChannelContainerAdapter.class);
+		
 	}
 
 }

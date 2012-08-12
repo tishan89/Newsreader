@@ -118,5 +118,20 @@ public interface IServerConnection {
 	public void setPossibleResponseAvailable(boolean b);	
 	
 	public boolean isPossibleResponseAvailable() ;
+	
+	/**
+	 * @return the array of all MessageSources found on this server.
+	 * @throws Exception
+	 * 
+	 */
+	
+	public IMessageSource[] getMessageSource() throws Exception;
+	
+	/**
+	 * Method to get the credentials of
+	 * ServerConnection.
+	 * @return credentials
+	 */
+	public ICredentials getCredentials();
 
 }

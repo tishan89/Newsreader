@@ -16,6 +16,7 @@ import javax.print.attribute.standard.Severity;
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
 import org.eclipse.ecf.channel.core.SalvoUtil;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
@@ -23,6 +24,7 @@ import org.eclipse.ecf.core.ContainerConnectException;
 import org.eclipse.ecf.core.ContainerCreateException;
 import org.eclipse.ecf.core.ContainerFactory;
 import org.eclipse.ecf.core.IContainer;
+import org.eclipse.ecf.core.IContainerManager;
 import org.eclipse.ecf.core.identity.ID;
 import org.eclipse.ecf.core.identity.IDCreateException;
 import org.eclipse.ecf.core.identity.IDFactory;
@@ -45,7 +47,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class NewNewsServerWizard extends Wizard implements INewWizard {
@@ -59,6 +63,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 	private ITransactionContext tContext;
 	private ServiceTracker salvoUtilTracker;
 	private SalvoUtil salvoUtil;
+	IChannelContainerAdapter adaptor;
 
 	public NewNewsServerWizard() {
 	}
@@ -78,14 +83,35 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		// IServer targetServer = page1.getServer();
-		Bundle bundle = FrameworkUtil
-				.getBundle(org.eclipse.ecf.channel.core.SalvoUtil.class);
-		salvoUtilTracker = new ServiceTracker(bundle.getBundleContext(),
-				org.eclipse.ecf.channel.core.SalvoUtil.class, null);
-		salvoUtilTracker.open();
-		salvoUtil = ((SalvoUtil) salvoUtilTracker.getService()).getDefault();
+		BundleContext sContext = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = sContext
+				.getServiceReference(ISalvoUtil.class.getName());
+		salvoUtil = (SalvoUtil) sContext.getService(reference);
 
+		tContext = new ITransactionContext() {
+			private String pWord;
+
+			public CallbackHandler getCallbackHandler() {
+
+				return null;
+			}
+
+			public void setPWord(String pWord) {
+				this.pWord = pWord;
+
+			}
+
+			public String getPWord() {
+				return pWord;
+			}
+		};
+		tContext.setPWord(page1.getPass());
 		try {
+			targetID = IDFactory.getDefault()
+					.createID(container.getConnectNamespace(),
+							page1.getServer().getURL());
+
 			if (page1.getAddress().split(":")[0].contains("nntp")) {
 				container = ContainerFactory.getDefault().createContainer(
 						"ecf.provider.nntp");
@@ -93,39 +119,15 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 						container,
 						ContainerFactory.getDefault().getDescriptionByName(
 								"ecf.provider.nntp"));
+				((NNTPServerContainer) container).setServer(page1.getServer());
+				
 
 			}
 
-			// context =
 			// ConnectContextFactory.createPasswordConnectContext(page1.getPass());
-			tContext = new ITransactionContext() {
-				private String pWord;
 
-				public CallbackHandler getCallbackHandler() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				public void setPWord(String pWord) {
-					this.pWord = pWord;
-
-				}
-
-				public String getPWord() {
-					return pWord;
-				}
-			};
-			tContext.setPWord(page1.getPass());
-			targetID = IDFactory.getDefault()
-					.createID(container.getConnectNamespace(),
-							page1.getServer().getURL());
-
-			// just for testing
-			if (container instanceof NNTPServerContainer) {
-				((NNTPServerContainer) container).setServer((INNTPServer) page1
-						.getServer());
-			}
 			container.connect(targetID, tContext);
+
 		} catch (ContainerCreateException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -148,8 +150,9 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		 * setWindowTitle(e1.getMessage()); return false; }
 		 */
 
-		IChannelContainerAdapter adaptor = (IChannelContainerAdapter) container
+		adaptor = (IChannelContainerAdapter) container
 				.getAdapter(IChannelContainerAdapter.class);
+		this.server = adaptor.getServer();
 		try {
 			adaptor.connectToMessageSource(page2.getGroups());
 		} catch (Exception e) {
@@ -174,14 +177,11 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		try {
-			if (page instanceof SubscribeGroupWizardPage)
-				// TODO temporary fix
-				((SubscribeGroupWizardPage) page).setInput((INNTPServer) page1
-						.getServer());
-		} catch (NNTPException e) {
-			Debug.log(getClass(), e);
-		}
+		// TODO temporary fix
+		
+			if (page instanceof SubscribeGroupWizardPage) {
+				((SubscribeGroupWizardPage) page).setInput(adaptor.getServer());			
+			}
 		return super.getNextPage(page);
 	}
 

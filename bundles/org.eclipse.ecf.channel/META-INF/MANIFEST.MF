@@ -18,4 +18,5 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5,
  J2SE-1.4,
  JavaSE-1.6
 Eclipse-AutoStart: true
-Export-Package: org.eclipse.ecf.channel
+Export-Package: org.eclipse.ecf.channel,
+ org.eclipse.ecf.channel.provider

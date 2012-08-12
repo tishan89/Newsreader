@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.salvo.ui.internal.provider.NewsContentProvider;
@@ -112,7 +113,7 @@ public class SubscribeGroupWizardPage extends WizardPage {
 		return result;
 	}
 
-	public void setInput(INNTPServer server) {
+	public void setInput(IServer server) {
 		setTitle(server.getAddress());
 		ISalvoResource s2 = SalvoResourceFactory.getResource(
 				server.getAddress(), server);

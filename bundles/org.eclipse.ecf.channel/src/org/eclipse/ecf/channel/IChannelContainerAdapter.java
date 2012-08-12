@@ -1,10 +1,13 @@
 package org.eclipse.ecf.channel;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ecf.channel.model.*;
+import org.eclipse.ecf.channel.provider.IMessageSourceProvider;
+
+
 
 /*This is the Connectivity API for Salvo Newsreader. 
  * Any concrete protocol dependent implementation 
@@ -56,7 +59,7 @@ public interface IChannelContainerAdapter extends IAdaptable {
 	 *            : Used to specify messageSource etc.
 	 * @throws Exception
 	 */
-	public void postNewMessages(IMessage message, ITransactionContext context)
+	public void postNewMessages(IMessageSource[] message, String subject, String body)
 			throws Exception;
 
 	/**
@@ -78,13 +81,52 @@ public interface IChannelContainerAdapter extends IAdaptable {
 	 */
 	public void delete(ITransactionContext context, String messageId)
 			throws Exception;
-	
+
 	/**
 	 * Method to connect to given set of message sources
-	 * @param collection Set of message sources
-	 * @throws Exception 
+	 * 
+	 * @param collection
+	 *            Set of message sources
+	 * @throws Exception
 	 */
-	public void connectToMessageSource(Collection<IMessageSource> collection) throws Exception;
-		
+	public void connectToMessageSource(Collection<IMessageSource> collection)
+			throws Exception;
+
+	/**
+	 * Method to get the server associated with the connection.
+	 * 
+	 * @return ISrver
+	 */
+	public IServer getServer();
 	
+	/**
+	 * Method to return the list of subcribed message sources
+	 * by user.
+	 * @return List of Message sources.
+	 */
+	public ArrayList<IMessageSource> fetchSubcribedMessageSources();
+
+	
+	/**Salvo uses the concept of providers. 
+	 * Providers provide the Message sources(INewsgroup/Forum). A provider is associated with server.
+	 * It is always recommended to get a source through provider  in Salvo.
+	 * @return List of Message Source Providers.
+	 */
+	public IMessageSourceProvider[] getProviders();
+
+	/**
+	 * Get a message source associated with a provide.
+	 * Provider concept is explained earliar.
+	 * @param provider (IMessageSourcePrvider)
+	 * @return IMessageSource
+	 */
+	public IMessageSource getMessageSource(IMessageSourceProvider provider);
+
+	/**
+	 * Method to subcribe to given message source.
+	 * @param source
+	 * @throws Exception
+	 */
+	public void subscribeMessageSource(IMessageSource source)throws Exception;
+
 }

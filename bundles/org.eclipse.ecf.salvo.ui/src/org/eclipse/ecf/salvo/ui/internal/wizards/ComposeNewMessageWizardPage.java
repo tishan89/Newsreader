@@ -95,7 +95,7 @@ public class ComposeNewMessageWizardPage extends WizardPage {
 		setControl(composite);
 		{
 			btnSubscribeToNewsgroup = new Button(composite, SWT.CHECK);
-			btnSubscribeToNewsgroup.setText("Subscribe to Newsgroup after posting the question");
+			btnSubscribeToNewsgroup.setText("Subscribe to Message Source after posting the question");
 			btnSubscribeToNewsgroup.setSelection(true);
 		}
 		setPageComplete(false);
