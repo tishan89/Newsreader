@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -284,5 +285,10 @@ public class Article implements IArticle {
 
 	public String getURL() {
 		return getNewsgroup().getURL() + "&article=" + getArticleNumber();
+	}
+
+	public IMessageSource getMessageSource() {
+		
+		return this.getNewsgroup();
 	}
 }

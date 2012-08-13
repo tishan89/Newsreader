@@ -12,6 +12,12 @@
 package org.eclipse.ecf.salvo.ui.internal.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -39,6 +45,9 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class PostNewArticleView extends ViewPart implements ISaveablePart {
 
@@ -50,9 +59,12 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 
 	private boolean once;
 
-	private INewsgroup newsgroup;
+	private IMessageSource messageSource;
 
 	private Point location;
+
+	private IContainer iContainer;
+	private IChannelContainerAdapter adaptor;
 
 	public PostNewArticleView() {
 
@@ -70,7 +82,8 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 		{
 			Composite group = new Composite(composite, SWT.NONE);
 			group.setLayout(new GridLayout(2, false));
-			group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+			group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
+					1, 1));
 			{
 				Label lblSubject = new Label(group, SWT.NONE);
 				lblSubject.setBounds(0, 0, 55, 15);
@@ -78,7 +91,8 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 			}
 			{
 				subjectText = new Text(group, SWT.BORDER);
-				subjectText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				subjectText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+						true, false, 1, 1));
 				subjectText.addKeyListener(new KeyAdapter() {
 
 					@Override
@@ -91,7 +105,8 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 			}
 		}
 		bodyText = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.WRAP);
-		bodyText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		bodyText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
+				1));
 		bodyText.addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -106,17 +121,23 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 		ISalvoResource resource = (ISalvoResource) SelectionUtil
 				.getFirstObjectFromCurrentSelection(ISalvoResource.class);
 
-		if (resource != null && resource.getObject() instanceof IArticle) {
-			newsgroup = ((IArticle) resource.getObject()).getNewsgroup();
-		} else if (resource != null && resource.getObject() instanceof INewsgroup) {
-			newsgroup = (INewsgroup) resource.getObject();
+		if (resource != null && resource.getObject() instanceof IMessage) {
+			messageSource = ((IMessage) resource.getObject())
+					.getMessageSource();
+		} else if (resource != null
+				&& resource.getObject() instanceof IMessageSource) {
+			messageSource = (IMessageSource) resource.getObject();
 		}
 
-		IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
-		handlerService.activateHandler("org.eclipse.ui.file.save", new ActionHandler(ActionFactory.SAVE
-				.create(getSite().getWorkbenchWindow())));
+		IHandlerService handlerService = (IHandlerService) getViewSite()
+				.getService(IHandlerService.class);
+		handlerService.activateHandler(
+				"org.eclipse.ui.file.save",
+				new ActionHandler(ActionFactory.SAVE.create(getSite()
+						.getWorkbenchWindow())));
 
-		bodyText.setText(SALVO.CRLF + SignatureProvider.getSignature(newsgroup));
+		bodyText.setText(SALVO.CRLF
+				+ SignatureProvider.getSignature(messageSource));
 
 	}
 
@@ -124,22 +145,27 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 	public void setFocus() {
 		if (!once) {
 			once = true;
-			IViewReference ref = getSite().getPage().findViewReference(
-					"org.eclipse.ecf.salvo.ui.internal.views.postNewArticleView", "1");
+			IViewReference ref = getSite()
+					.getPage()
+					.findViewReference(
+							"org.eclipse.ecf.salvo.ui.internal.views.postNewArticleView",
+							"1");
 			if (PreferenceModel.instance.getUseDetachedView()) {
-				((WorkbenchPage) getSite().getPage()).getActivePerspective().getPresentation()
-						.detachPart(ref);
+				((WorkbenchPage) getSite().getPage()).getActivePerspective()
+						.getPresentation().detachPart(ref);
 				getViewSite().getShell().setSize(600, 450);
-				getViewSite().getShell().setLocation(location.x + 100, location.y + 100);
+				getViewSite().getShell().setLocation(location.x + 100,
+						location.y + 100);
 			} else
-				((WorkbenchPage) getSite().getPage()).getActivePerspective().getPresentation()
-						.attachPart(ref);
+				((WorkbenchPage) getSite().getPage()).getActivePerspective()
+						.getPresentation().attachPart(ref);
 
 		}
 		subjectText.setFocus();
 	}
 
 	public void doSave(IProgressMonitor monitor) {
+		setupContainer();
 
 		final StringBuffer buffer = new StringBuffer(bodyText.getText());
 
@@ -161,17 +187,19 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 			}
 		}
 
-		monitor.subTask("Posting to newsgroup " + newsgroup.getNewsgroupName());
+		monitor.subTask("Posting to message source "
+				+ messageSource.getMessageSourceName());
 		monitor.worked(1);
-		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory.instance().getServerStoreFacade();
 		monitor.worked(1);
 
 		try {
-			serverStoreFacade.postNewArticle(new INewsgroup[] { newsgroup }, subjectText.getText(), buffer
-					.toString());
-		} catch (NNTPException e) {
-			MessageDialog.openError(getViewSite().getShell(), "Problem posting message",
+			adaptor.postNewMessages(new IMessageSource[] { messageSource },
+					subjectText.getText(), buffer.toString());
+		} catch (Exception e) {
+			MessageDialog.openError(getViewSite().getShell(),
+					"Problem posting message",
 					"The message could not be posted. \n\r" + e.getMessage());
+			e.printStackTrace();
 		}
 		monitor.done();
 		dirty = false;
@@ -182,6 +210,19 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 				getViewSite().getPage().hideView(view);
 			}
 		});
+
+	}
+
+	private void setupContainer() {
+		BundleContext context = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		SalvoUtil salvoUtil = (SalvoUtil) context.getService(reference);
+		this.iContainer = salvoUtil.getDefault().getContainerManager()
+				.getAllContainers()[0];
+		adaptor = (IChannelContainerAdapter) iContainer
+				.getAdapter(IChannelContainerAdapter.class);
 
 	}
 

@@ -148,4 +148,10 @@ public interface IMessage extends Serializable,IProperties{
 	 * 
 	 */
 	public void setParent(IMessage message);
+	
+	/**
+	 * Get the message source that holds the message
+	 * @return MessageSource
+	 */
+	public IMessageSource getMessageSource();
 }

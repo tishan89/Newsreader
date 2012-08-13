@@ -1,6 +1,7 @@
 package org.eclipse.ecf.salvo.ui.internal.provider;
 
 import org.eclipse.ecf.channel.core.Debug;
+import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.salvo.ui.internal.Activator;
 import org.eclipse.ecf.salvo.ui.internal.preferences.PreferenceModel;
@@ -11,11 +12,11 @@ import org.osgi.framework.ServiceReference;
 
 public class SignatureProvider {
 
-	public static String getSignature(INewsgroup newsgroup) {
+	public static String getSignature(IMessageSource source) {
 
 		PreferenceModel prefs = PreferenceModel.instance;
 		String quote = prefs.getSignature();
-		quote = quote.replaceAll("\\$\\{NAME\\}", newsgroup.getServer().getServerConnection().getUser());
+		quote = quote.replaceAll("\\$\\{NAME\\}", source.getServer().getServerConnection().getUser());
 
 		String service = PreferenceModel.instance.getQuoteService();
 		
