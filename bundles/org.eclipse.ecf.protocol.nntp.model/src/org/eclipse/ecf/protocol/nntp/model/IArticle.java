@@ -59,14 +59,7 @@ public interface IArticle extends IMessage{
 	 */
 	public String getXRef();
 
-	/**
-	 * Sets the specified header <code>element</code> to the specified
-	 * <code>value</code>.
-	 * 
-	 * @param element
-	 * @param value
-	 */
-	public void setHeaderAttributeValue(String element, String value);
+	
 
 	
 	public void setNewsgroup(INewsgroup newsgroup);

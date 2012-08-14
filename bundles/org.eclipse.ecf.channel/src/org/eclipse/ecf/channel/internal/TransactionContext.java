@@ -9,33 +9,30 @@
  * Contributors:                                                        
  *    Tishan Dahanayakage - initial API 
  *******************************************************************************/
-package org.eclipse.ecf.channel;
+package org.eclipse.ecf.channel.internal;
 
-import org.eclipse.ecf.core.security.IConnectContext;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Interface to be implemented for contexts that should be passed get
- * operations(Eg: reply, post new, connect) done.
- * 
- */
-public interface ITransactionContext extends IConnectContext {
+import org.eclipse.ecf.channel.ITransactionContext;
+import org.eclipse.ecf.core.security.CallbackHandler;
 
-	/**
-	 * Method to set key value pairs.(Eg: Password, Username, etc)
-	 * 
-	 * @param key
-	 *            String
-	 * @param value
-	 *            String
-	 */
-	public void set(String key, String value);
+public class TransactionContext implements ITransactionContext {
 
-	/**
-	 * Method to get value of a given key.
-	 * 
-	 * @param key
-	 *            String
-	 * @return Value of the given keys
-	 */
-	public String get(String key);
+	private Map<String, String> context = new HashMap<String, String>();
+
+	public CallbackHandler getCallbackHandler() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void set(String key, String value) {
+		context.put(key, value);
+
+	}
+
+	public String get(String key) {
+		return context.get(key);
+	}
+
 }

@@ -19,22 +19,22 @@ import org.apache.james.mime4j.descriptor.BodyDescriptor;
 import org.apache.james.mime4j.parser.AbstractContentHandler;
 import org.apache.james.mime4j.parser.Field;
 import org.eclipse.ecf.channel.core.Debug;
-import org.eclipse.ecf.protocol.nntp.model.IArticle;
+import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 
 
 public class MimeArticleContentHandler extends AbstractContentHandler {
 
-	private final IArticle article;
+	private final IMessage message;
 
 	private String body;
 
-	public MimeArticleContentHandler(IArticle article) {
-		this.article = article;
+	public MimeArticleContentHandler(IMessage message) {
+		this.message = message;
 	}
 
 	public MimeArticleContentHandler() {
-		this.article = null;
+		this.message = null;
 	}
 
 	@Override
@@ -54,21 +54,21 @@ public class MimeArticleContentHandler extends AbstractContentHandler {
 
 	@Override
 	public void field(Field field) throws MimeException {
-		article.setHeaderAttributeValue(field.getName(), field.getBody());
+		message.setHeaderAttributeValue(field.getName(), field.getBody());
 		Debug.log(getClass(), "Header field detected: " + field.getName() + " - " + field.getBody());
 	}
 
 	@Override
 	public void startMultipart(BodyDescriptor bd) throws MimeException {
-		article.setHeaderAttributeValue("Mime-Media " , bd.getMediaType());
-		article.setHeaderAttributeValue("Mime-Type " , bd.getMimeType() + " " + bd.getSubType());
-		article.setHeaderAttributeValue("Mime-Enco " , bd.getTransferEncoding());
-		article.setHeaderAttributeValue("Mime-CTParms " , bd.getContentTypeParameters().toString());
+		message.setHeaderAttributeValue("Mime-Media " , bd.getMediaType());
+		message.setHeaderAttributeValue("Mime-Type " , bd.getMimeType() + " " + bd.getSubType());
+		message.setHeaderAttributeValue("Mime-Enco " , bd.getTransferEncoding());
+		message.setHeaderAttributeValue("Mime-CTParms " , bd.getContentTypeParameters().toString());
 		System.out.println("Multipart body " + bd.getBoundary());
 	}
 
 	@Override
 	public void preamble(InputStream is) throws MimeException, IOException {
-		article.setHeaderAttributeValue("Mime - Preamble" , is.toString());
+		message.setHeaderAttributeValue("Mime - Preamble" , is.toString());
 	}
 }

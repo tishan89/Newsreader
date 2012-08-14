@@ -12,14 +12,13 @@
 package org.eclipse.ecf.salvo.ui.wizards;
 
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.core.ISalvoUtil;
 import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.internal.TransactionContext;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.core.IContainer;
-import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.salvo.ui.internal.wizards.ComposeNewMessageWizardPage;
 import org.eclipse.ecf.salvo.ui.internal.wizards.SelectNewsgroupWizardPage;
@@ -88,13 +87,16 @@ public class AskAQuestionWizard extends Wizard {
 			try {
 
 				// posting article
-				adaptor.postNewMessages(new INewsgroup[] { (INewsgroup)group },
-						subject, body);
+				ITransactionContext context = new TransactionContext();
+				context.set("subject", subject);
+				context.set("body", body);
+				adaptor.postNewMessages(new IMessageSource[] { group },null,
+						context);
 
 				// Subscribe newsgroup
 				if (!group.isSubscribed()
 						&& composeNewArticleWizardPage.doSubscribe()) {
-					adaptor.subscribeMessageSource((INewsgroup)group);
+					adaptor.subscribeMessageSource(group);
 				}
 
 				MessageDialog.openInformation(

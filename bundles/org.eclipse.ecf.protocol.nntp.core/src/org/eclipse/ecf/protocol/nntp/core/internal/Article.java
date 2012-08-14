@@ -17,16 +17,20 @@ import java.util.Map;
 import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.channel.model.IMessageSource;
+import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
 import org.eclipse.ecf.protocol.nntp.core.StringUtils;
 import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
+import org.eclipse.ecf.protocol.nntp.model.NNTPIOException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
+import org.eclipse.ecf.protocol.nntp.model.StoreException;
+import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
 public class Article implements IArticle {
 
 	/**
-	 * This is the Implementation of IArticle. 
+	 * This is the Implementation of IArticle.
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -163,7 +167,6 @@ public class Article implements IArticle {
 	}
 
 	public String getFullUserName() {
-		
 
 		//
 		// Simplistic implementation of rfc850
@@ -198,7 +201,7 @@ public class Article implements IArticle {
 	}
 
 	public void setParent(IMessage article) {
-		parent = (IArticle)article;
+		parent = (IArticle) article;
 	}
 
 	public String getLastReference() {
@@ -288,7 +291,19 @@ public class Article implements IArticle {
 	}
 
 	public IMessageSource getMessageSource() {
-		
+
 		return this.getNewsgroup();
+	}
+
+	public String[] getMessageBody() throws UnexpectedResponseException, StoreException, NNTPIOException {
+
+		return (String[]) NNTPServerStoreFactory.instance()
+				.getServerStoreFacade().getArticleBody(this);
+		
+	}
+
+	public void setThreadAttributes(IMessage[] replies) {
+		this.setThreadAttributes((IArticle[])replies);
+		
 	}
 }

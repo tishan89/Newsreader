@@ -1,13 +1,21 @@
+/*******************************************************************************
+ *  Copyright (c) 2012 University of Moratuwa
+ *                                                                      
+ * All rights reserved. This program and the accompanying materials     
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at             
+ * http://www.eclipse.org/legal/epl-v10.html                            
+ *                                                                      
+ * Contributors:                                                        
+ *    Tishan Dahanayakage - initial API 
+ *******************************************************************************/
 package org.eclipse.ecf.channel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ecf.channel.model.*;
 import org.eclipse.ecf.channel.provider.IMessageSourceProvider;
-
-
 
 /*This is the Connectivity API for Salvo Newsreader. 
  * Any concrete protocol dependent implementation 
@@ -48,18 +56,18 @@ public interface IChannelContainerAdapter extends IAdaptable {
 	 * @param context
 	 *            : Context data needed for replying.
 	 */
-	public void reply(IMessage message, ITransactionContext context);
+	public void reply(IMessage message, ITransactionContext context) throws Exception;
 
+	
+	
 	/**
-	 * Method to post new messages to a source.
-	 * 
-	 * @param message
-	 *            : message to be posted
-	 * @param context
-	 *            : Used to specify messageSource etc.
+	 * Method to post new messages to a given message source/s
+	 * @param sources : List of sources where the message should be posted
+	 * @param message : Message to be posted
+	 * @param context : relevant context data
 	 * @throws Exception
 	 */
-	public void postNewMessages(IMessageSource[] message, String subject, String body)
+	public void postNewMessages(IMessageSource[] sources, IMessage message, ITransactionContext context)
 			throws Exception;
 
 	/**
@@ -128,5 +136,21 @@ public interface IChannelContainerAdapter extends IAdaptable {
 	 * @throws Exception
 	 */
 	public void subscribeMessageSource(IMessageSource source)throws Exception;
+	
+	/**
+	 * Method to get follow up message of a given messages.
+	 * (Eg: If it is a forum this will list up all the posts
+	 * given under given post)
+	 * @return List of follow up messages.
+	 */
+	public IMessage[] fetchFollowups(IMessage message) throws Exception;
+	
+	/**
+	 * Method to update an existing message.
+	 * @param message Message to-be updated
+	 * @param context To pass needed information
+	 * @throws Exception
+	 */
+	public void updateMessage(IMessage message, ITransactionContext context) throws Exception;
 
 }

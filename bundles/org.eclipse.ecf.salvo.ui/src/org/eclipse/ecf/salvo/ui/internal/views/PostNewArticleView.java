@@ -13,16 +13,13 @@ package org.eclipse.ecf.salvo.ui.internal.views;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.ISalvoUtil;
 import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.internal.TransactionContext;
 import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.core.IContainer;
-import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
-import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.NNTPException;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.preferences.PreferenceModel;
 import org.eclipse.ecf.salvo.ui.internal.provider.SignatureProvider;
@@ -193,8 +190,11 @@ public class PostNewArticleView extends ViewPart implements ISaveablePart {
 		monitor.worked(1);
 
 		try {
-			adaptor.postNewMessages(new IMessageSource[] { messageSource },
-					subjectText.getText(), buffer.toString());
+			ITransactionContext context = new TransactionContext();
+			context.set("subject", subjectText.getText());
+			context.set("body", buffer.toString());
+			adaptor.postNewMessages(new IMessageSource[] { messageSource },null,
+					context);
 		} catch (Exception e) {
 			MessageDialog.openError(getViewSite().getShell(),
 					"Problem posting message",

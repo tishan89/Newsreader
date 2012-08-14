@@ -18,8 +18,11 @@ import java.util.List;
 import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.IArticle;
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.MimeArticleContentHandler;
 import org.eclipse.ecf.salvo.ui.internal.editor.ArticlePanel;
@@ -41,15 +44,21 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class MessageView extends ViewPart implements ISelectionListener,
 		ISelectionProvider {
 
-	private IArticle article;
+	private IMessage message;
 
 	private Composite parent;
 
 	public static String ID = "org.eclipse.ecf.salvo.ui.internal.views.messageView";
+	
+	private IContainer iContainer;
+	private IChannelContainerAdapter adaptor;
 
 	public MessageView() {
 		// TODO Auto-generated constructor stub
@@ -81,8 +90,8 @@ public class MessageView extends ViewPart implements ISelectionListener,
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-
-		IArticle newArticle = null;
+		setupContainer();
+		IMessage newArticle = null;
 		ISalvoResource resource = null;
 
 		if (part == this)
@@ -99,41 +108,38 @@ public class MessageView extends ViewPart implements ISelectionListener,
 				return;
 			}
 
-			if (!(((ISalvoResource) struct.getFirstElement()).getObject() instanceof IArticle)) {
+			if (!(((ISalvoResource) struct.getFirstElement()).getObject() instanceof IMessage)) {
 				return;
 			}
 
 			resource = (ISalvoResource) struct.getFirstElement();
-			newArticle = (IArticle) resource.getObject();
+			newArticle = (IMessage) resource.getObject();
 			setSelection(selection);
 
-			if (article != newArticle) {
+			if (message != newArticle) {
 
 				// FIXME same code is used in ReplyView
 
 				try {
-					article = newArticle;
+					message = newArticle;
 
-					setContentDescription("From: " + article.getFrom()
-							+ "  To: " + article.getXRef());
-					setPartName(DecoderUtil.decodeEncodedWords(article
+					setContentDescription("From: " + message.getFrom()
+							+ "  To: " );	//removed '+ message.getXRef()' since getXRef is not present in IMessage. Need to figure out whether it is a generic info.
+					setPartName(DecoderUtil.decodeEncodedWords(message
 							.getSubject()));
 
-					article.setRead(true);
-					article.setThreadAttributes(NNTPServerStoreFactory.instance()
-							.getServerStoreFacade().getAllFollowUps(article));
-					NNTPServerStoreFactory.instance().getServerStoreFacade()
-							.updateArticle(article);
+					message.setRead(true);
+					message.setThreadAttributes(adaptor.fetchFollowups(message));
+					adaptor.updateMessage(message, null);
 
 					StringBuffer buffer = new StringBuffer();
-					String[] body = (String[]) NNTPServerStoreFactory.instance()
-							.getServerStoreFacade().getArticleBody(article);
+					String[] body = (String[]) message.getMessageBody();
 					for (String line : body) {
 						buffer.append(line + SALVO.CRLF);
 					}
 
 					MimeArticleContentHandler handler = new MimeArticleContentHandler(
-							article);
+							message);
 					MimeStreamParser parser = new MimeStreamParser();
 					parser.setContentHandler(handler);
 
@@ -145,7 +151,7 @@ public class MessageView extends ViewPart implements ISelectionListener,
 							child.dispose();
 						}
 
-					ArticleWidgetBuilder.build(parent, article, handler);
+					ArticleWidgetBuilder.build(parent, message, handler);
 					// composite.setLayout(gridLayout);
 					parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 							true));
@@ -166,6 +172,19 @@ public class MessageView extends ViewPart implements ISelectionListener,
 			getViewSite().getPage().bringToTop(this);
 		}
 
+	}
+
+	private void setupContainer() {
+		BundleContext context = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		SalvoUtil salvoUtil = (SalvoUtil) context.getService(reference);
+		this.iContainer = salvoUtil.getDefault().getContainerManager()
+				.getAllContainers()[0];
+		adaptor = (IChannelContainerAdapter) iContainer
+				.getAdapter(IChannelContainerAdapter.class);
+		
 	}
 
 	List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();

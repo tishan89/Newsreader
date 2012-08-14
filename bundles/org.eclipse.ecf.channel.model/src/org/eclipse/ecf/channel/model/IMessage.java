@@ -3,6 +3,7 @@ package org.eclipse.ecf.channel.model;
 import java.io.Serializable;
 
 
+
 /*This is the interface to which represent a general(abstract) message.
  * Any specific type(Ex: Article, Post) should implement this.
  */
@@ -154,4 +155,25 @@ public interface IMessage extends Serializable,IProperties{
 	 * @return MessageSource
 	 */
 	public IMessageSource getMessageSource();
+	/**
+	 * Sets the specified header <code>element</code> to the specified
+	 * <code>value</code>.
+	 * 
+	 * @param element
+	 * @param value
+	 */
+	public void setHeaderAttributeValue(String element, String value);
+
+	/**
+	 * Method to return the message body as a String array.
+	 * @return String[] Message body
+	 */
+	public String[] getMessageBody() throws Exception;
+	
+	/**
+	 * Method to set associated content(Eg: follow ups) of a given
+	 * message.
+	 * @param replies
+	 */
+	public void setThreadAttributes(IMessage[] replies);
 }

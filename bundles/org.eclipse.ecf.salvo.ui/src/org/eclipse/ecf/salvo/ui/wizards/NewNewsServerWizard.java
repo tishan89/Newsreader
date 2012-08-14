@@ -18,6 +18,7 @@ import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.Debug;
 import org.eclipse.ecf.channel.core.ISalvoUtil;
 import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.internal.TransactionContext;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.core.ContainerConnectException;
@@ -89,24 +90,8 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 				.getServiceReference(ISalvoUtil.class.getName());
 		salvoUtil = (SalvoUtil) sContext.getService(reference);
 
-		tContext = new ITransactionContext() {
-			private String pWord;
-
-			public CallbackHandler getCallbackHandler() {
-
-				return null;
-			}
-
-			public void setPWord(String pWord) {
-				this.pWord = pWord;
-
-			}
-
-			public String getPWord() {
-				return pWord;
-			}
-		};
-		tContext.setPWord(page1.getPass());
+		tContext = new TransactionContext();
+		tContext.set("pWord", page1.getPass());
 		try {
 			targetID = IDFactory.getDefault()
 					.createID(container.getConnectNamespace(),

@@ -16,11 +16,14 @@ import java.io.ByteArrayInputStream;
 import org.apache.james.mime4j.codec.DecoderUtil;
 import org.apache.james.mime4j.parser.MimeStreamParser;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ecf.channel.IChannelContainerAdapter;
+import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.Debug;
-import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
-import org.eclipse.ecf.protocol.nntp.model.IArticle;
-import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
-import org.eclipse.ecf.protocol.nntp.model.NNTPException;
+import org.eclipse.ecf.channel.core.ISalvoUtil;
+import org.eclipse.ecf.channel.core.SalvoUtil;
+import org.eclipse.ecf.channel.internal.TransactionContext;
+import org.eclipse.ecf.channel.model.IMessage;
+import org.eclipse.ecf.core.IContainer;
 import org.eclipse.ecf.protocol.nntp.model.SALVO;
 import org.eclipse.ecf.salvo.ui.internal.MimeArticleContentHandler;
 import org.eclipse.ecf.salvo.ui.internal.provider.SignatureProvider;
@@ -37,6 +40,9 @@ import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class ReplyView extends ViewPart implements ISaveablePart {
 
@@ -44,7 +50,9 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 
 	private boolean dirty = false;
 
-	private IArticle article;
+	private IMessage message;
+	private IContainer iContainer;
+	private IChannelContainerAdapter adaptor;
 
 	public ReplyView() {
 
@@ -57,22 +65,24 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		bodyText = new Text(parent, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		bodyText = new Text(parent, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL
+				| SWT.MULTI);
 
 		ISalvoResource resource = (ISalvoResource) SelectionUtil
 				.getFirstObjectFromCurrentSelection(ISalvoResource.class);
 
-		if (resource != null && resource.getObject() instanceof IArticle) {
+		if (resource != null && resource.getObject() instanceof IMessage) {
 
 			// FIXME same code is used in MessageView
 
-			article = (IArticle) resource.getObject();
+			message = (IMessage) resource.getObject();
 
 			StringBuffer buffer = new StringBuffer();
 			String[] body;
 			try {
-				body = (String[]) NNTPServerStoreFactory.instance().getServerStoreFacade()
-						.getArticleBody(article);
+
+				body = message.getMessageBody();
+
 			} catch (Exception e1) {
 				body = new String[] { e1.getMessage() };
 			}
@@ -80,12 +90,14 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 				buffer.append(line + SALVO.CRLF);
 			}
 
-			MimeArticleContentHandler handler = new MimeArticleContentHandler(article);
+			MimeArticleContentHandler handler = new MimeArticleContentHandler(
+					message);
 			MimeStreamParser parser = new MimeStreamParser();
 			parser.setContentHandler(handler);
 
 			try {
-				parser.parse(new ByteArrayInputStream(buffer.toString().getBytes()));
+				parser.parse(new ByteArrayInputStream(buffer.toString()
+						.getBytes()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -97,7 +109,8 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 			buffer = new StringBuffer();
 			buffer.append(" " + SALVO.CRLF);
 			buffer.append(" " + SALVO.CRLF);
-			buffer.append(SignatureProvider.getSignature(article.getNewsgroup()));
+			buffer.append(SignatureProvider.getSignature(message
+					.getMessageSource()));
 			buffer.append(" " + SALVO.CRLF);
 			for (String line : handler.getBody().split(SALVO.CRLF)) {
 				if (line.startsWith(">"))
@@ -113,7 +126,8 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 				@Override
 				public void keyReleased(KeyEvent e) {
 					dirty = false;
-					System.out.println(textChangeHash + " - " + bodyText.getText().hashCode());
+					System.out.println(textChangeHash + " - "
+							+ bodyText.getText().hashCode());
 					if (textChangeHash != bodyText.getText().hashCode()) {
 						dirty = true;
 					}
@@ -121,14 +135,18 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 				}
 			});
 
-			setContentDescription("Reply to: " + article.getNewsgroup());
-			setPartName(DecoderUtil.decodeEncodedWords(article.getSubject().startsWith("Re: ") ? article
-					.getSubject() : "Re: " + article.getSubject()));
+			setContentDescription("Reply to: " + message.getMessageSource());
+			setPartName(DecoderUtil.decodeEncodedWords(message.getSubject()
+					.startsWith("Re: ") ? message.getSubject() : "Re: "
+					+ message.getSubject()));
 		}
 
-		IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
-		handlerService.activateHandler("org.eclipse.ui.file.save", new ActionHandler(ActionFactory.SAVE
-				.create(getSite().getWorkbenchWindow())));
+		IHandlerService handlerService = (IHandlerService) getViewSite()
+				.getService(IHandlerService.class);
+		handlerService.activateHandler(
+				"org.eclipse.ui.file.save",
+				new ActionHandler(ActionFactory.SAVE.create(getSite()
+						.getWorkbenchWindow())));
 
 		// getViewSite().getActionBars().setGlobalActionHandler("org.eclipse.ui.file.save",
 		// ActionFactory.SAVE.create(getSite().getWorkbenchWindow()));
@@ -142,7 +160,7 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 	}
 
 	public void doSave(IProgressMonitor monitor) {
-
+		setupContainer();
 		final StringBuffer buffer = new StringBuffer(bodyText.getText());
 
 		monitor.beginTask("Posting", 43);
@@ -163,17 +181,24 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 			}
 		}
 
-		monitor.subTask("Posting to newsgroup " + article.getNewsgroup().getNewsgroupName());
-		monitor.worked(1);
-		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory.instance().getServerStoreFacade();
+		monitor.subTask("Posting to newsgroup "
+				+ message.getMessageSource().getMessageSourceName());
 		monitor.worked(1);
 
+		monitor.worked(1);
+
+		ITransactionContext context = new TransactionContext();
+		context.set("subject", getPartName());
+		context.set("body", buffer.toString());
 		try {
-			serverStoreFacade.replyToArticle(getPartName(), article, buffer.toString());
-		} catch (NNTPException e) {
+			adaptor.reply(message, context);
+		} catch (Exception e) {
 			Debug.log(getClass(), e);
-			MessageDialog.openError(getViewSite().getShell(), "Problem posting message",
-					"The message could not be posted.\r\n" + "Due to " + e.getMessage());
+			MessageDialog.openError(
+					getViewSite().getShell(),
+					"Problem posting message",
+					"The message could not be posted.\r\n" + "Due to "
+							+ e.getMessage());
 			monitor.setCanceled(true);
 			return;
 		}
@@ -186,6 +211,19 @@ public class ReplyView extends ViewPart implements ISaveablePart {
 				getViewSite().getPage().hideView(view);
 			}
 		});
+	}
+
+	private void setupContainer() {
+		BundleContext context = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = context
+				.getServiceReference(ISalvoUtil.class.getName());
+		SalvoUtil salvoUtil = (SalvoUtil) context.getService(reference);
+		this.iContainer = salvoUtil.getDefault().getContainerManager()
+				.getAllContainers()[0];
+		adaptor = (IChannelContainerAdapter) iContainer
+				.getAdapter(IChannelContainerAdapter.class);
+
 	}
 
 	public void doSaveAs() {

@@ -18,6 +18,7 @@ import org.eclipse.ecf.core.identity.Namespace;
 import org.eclipse.ecf.core.security.IConnectContext;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerFactory;
 import org.eclipse.ecf.protocol.nntp.core.NNTPServerStoreFactory;
+import org.eclipse.ecf.protocol.nntp.model.IArticle;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServer;
 import org.eclipse.ecf.protocol.nntp.model.INNTPServerStoreFacade;
 import org.eclipse.ecf.protocol.nntp.model.INewsgroup;
@@ -71,7 +72,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 				.getServerStoreFacade();
 		try {
 			serverStoreFacade.subscribeServer(this.getServer(),
-					((ITransactionContext) connectContext).getPWord());
+					((ITransactionContext) connectContext).get("pWord"));
 		} catch (StoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,8 +127,10 @@ public class NNTPServerContainer extends AbstractContainer implements
 		return null;
 	}
 
-	public void reply(IMessage message, ITransactionContext context) {
-		// TODO Auto-generated method stub
+	public void reply(IMessage message, ITransactionContext context) throws NNTPIOException, UnexpectedResponseException, StoreException {
+		
+			serverStoreFacade.replyToArticle(context.get("subject"), (IArticle)message, context.get("body"));
+		
 
 	}
 
@@ -214,21 +217,33 @@ public class NNTPServerContainer extends AbstractContainer implements
 				.getNewsgroup(provider);
 	}
 
-	public void postNewMessages(IMessageSource[] message, String subject,
-			String body) throws Exception {
-		INewsgroup[] result = null;
+	public void postNewMessages(IMessageSource[] source, IMessage message, ITransactionContext context) throws Exception {
+		/*INewsgroup[] result = null;
 		int i=0;
 		for (IMessageSource source : message) {
 			result[i]=(INewsgroup)source;
 			
-		}
-		serverStoreFacade.postNewArticle(result,
-				subject, body);
+		}*/
+		serverStoreFacade.postNewArticle((INewsgroup[])source,
+				context.get("subject"), context.get("body"));
 		
 	}
 
 	public void subscribeMessageSource(IMessageSource group) throws NNTPIOException, UnexpectedResponseException, StoreException {
 		serverStoreFacade.subscribeNewsgroup((INewsgroup)group);
+		
+	}
+
+	public IMessage[] fetchFollowups(IMessage message) throws NNTPIOException, UnexpectedResponseException, StoreException {
+		
+		return NNTPServerStoreFactory.instance()
+				.getServerStoreFacade().getAllFollowUps((IArticle)message);
+	}
+
+	public void updateMessage(IMessage message, ITransactionContext context)
+			throws Exception {
+		NNTPServerStoreFactory.instance().getServerStoreFacade()
+		.updateArticle((IArticle) message);
 		
 	}
 
