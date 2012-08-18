@@ -68,7 +68,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 	public NewNewsServerWizardPage(String pageName) {
 		super(pageName);
 		setTitle("New Server");
-		setDescription("Enter the news server information and press Validate.");
+		setDescription("Enter the new server information and press Validate.");
 	}
 
 	public void createControl(Composite parent) {
@@ -82,7 +82,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
 				false));
-		label.setText("News Server Address");
+		label.setText("New Server Address");
 
 		address = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		address.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -232,13 +232,13 @@ public class NewNewsServerWizardPage extends WizardPage {
 
 					public void run() {
 						setErrorMessage(null);
-						if (v_address.split(":")[0].contains("nntp")) {
+						//if (v_address.split(":")[0].contains("nntp")) {
 							try {
 
 								INNTPServer server = NNTPServerFactory
 										.getCreateServer(v_address, v_port,
 												credentials, v_secure);
-								INNTPServerConnection connection = server
+								INNTPServerConnection connection = ((INNTPServer)server)
 										.getServerConnection();
 								connection.disconnect();
 								connection.connect();
@@ -248,7 +248,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 								message.append(e.getMessage());
 								Debug.log(getClass(), e);
 							}
-						}
+						//}
 
 					}
 				};

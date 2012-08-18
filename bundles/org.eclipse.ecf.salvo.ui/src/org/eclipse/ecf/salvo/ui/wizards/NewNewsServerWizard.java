@@ -58,12 +58,12 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 	protected NewNewsServerWizardPage page1;
 	protected SubscribeGroupWizardPage page2;
 	private IServer server;
-	private IContainer container;
+	private IContainer container = null;
 	private IConnectContext context;
 	private ID targetID;
 	private ITransactionContext tContext;
 	private ServiceTracker salvoUtilTracker;
-	private SalvoUtil salvoUtil;
+	private SalvoUtil salvoUtil = null;
 	IChannelContainerAdapter adaptor;
 
 	public NewNewsServerWizard() {
@@ -84,11 +84,6 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 	@Override
 	public boolean performFinish() {
 		// IServer targetServer = page1.getServer();
-		BundleContext sContext = FrameworkUtil.getBundle(this.getClass())
-				.getBundleContext();
-		ServiceReference reference = sContext
-				.getServiceReference(ISalvoUtil.class.getName());
-		salvoUtil = (SalvoUtil) sContext.getService(reference);
 
 		tContext = new TransactionContext();
 		tContext.set("pWord", page1.getPass());
@@ -97,25 +92,10 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 					.createID(container.getConnectNamespace(),
 							page1.getServer().getURL());
 
-			if (page1.getAddress().split(":")[0].contains("nntp")) {
-				container = ContainerFactory.getDefault().createContainer(
-						"ecf.provider.nntp");
-				salvoUtil.getContainerManager().addContainer(
-						container,
-						ContainerFactory.getDefault().getDescriptionByName(
-								"ecf.provider.nntp"));
-				((NNTPServerContainer) container).setServer(page1.getServer());
-				
-
-			}
-
 			// ConnectContextFactory.createPasswordConnectContext(page1.getPass());
 
 			container.connect(targetID, tContext);
 
-		} catch (ContainerCreateException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
 		} catch (IDCreateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,9 +115,6 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		 * setWindowTitle(e1.getMessage()); return false; }
 		 */
 
-		adaptor = (IChannelContainerAdapter) container
-				.getAdapter(IChannelContainerAdapter.class);
-		this.server = adaptor.getServer();
 		try {
 			adaptor.connectToMessageSource(page2.getGroups());
 		} catch (Exception e) {
@@ -162,15 +139,54 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
-		// TODO temporary fix
-		
-			if (page instanceof SubscribeGroupWizardPage) {
-				((SubscribeGroupWizardPage) page).setInput(adaptor.getServer());			
+		if (salvoUtil == null) {
+			setupSalvoUtil();
+		}
+		// if (page1.getAddress().split(":")[0].contains("nntp")) {
+		if (container == null) {
+			try {
+				container = ContainerFactory.getDefault().createContainer(
+						"ecf.provider.nntp");
+			} catch (ContainerCreateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+		try {
+			((NNTPServerContainer) container).setServer(page1.getServer());
+		} catch (NNTPException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		salvoUtil.getContainerManager().addContainer(
+				container,
+				ContainerFactory.getDefault().getDescriptionByName(
+						"ecf.provider.nntp"));
+
+		IContainer con = salvoUtil.getContainerManager().getAllContainers()[0];
+
+		// }
+		adaptor = (IChannelContainerAdapter) container
+				.getAdapter(IChannelContainerAdapter.class);
+		this.server = adaptor.getServer();
+
+		if (page instanceof SubscribeGroupWizardPage) {
+			((SubscribeGroupWizardPage) page).setInput(adaptor.getServer());
+		}
 		return super.getNextPage(page);
 	}
 
 	public IServer getServer() {
 		return server;
+	}
+
+	private void setupSalvoUtil() {
+		BundleContext sContext = FrameworkUtil.getBundle(this.getClass())
+				.getBundleContext();
+		ServiceReference reference = sContext
+				.getServiceReference(ISalvoUtil.class.getName());
+		salvoUtil = ((SalvoUtil) sContext.getService(reference)).getDefault();
+		// salvoUtil = salvoUtil.getDefault();
 	}
 }

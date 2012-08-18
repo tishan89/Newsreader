@@ -225,7 +225,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 			
 		}*/
 		serverStoreFacade.postNewArticle((INewsgroup[])source,
-				context.get("subject"), context.get("body"));
+				context.get("subject"), context.get("body                 "));
 		
 	}
 

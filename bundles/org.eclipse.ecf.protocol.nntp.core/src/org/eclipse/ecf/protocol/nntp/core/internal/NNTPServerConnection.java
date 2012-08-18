@@ -38,7 +38,7 @@ import org.eclipse.ecf.protocol.nntp.model.StoreException;
 import org.eclipse.ecf.protocol.nntp.model.TimeoutException;
 import org.eclipse.ecf.protocol.nntp.model.UnexpectedResponseException;
 
-public class NNTPServerConnection extends ServerConnection implements
+public class NNTPServerConnection implements
 		INNTPServerConnection {
 
 	private Socket socket;
@@ -65,7 +65,6 @@ public class NNTPServerConnection extends ServerConnection implements
 	private int batchSize;
 
 	public NNTPServerConnection(INNTPServer server) {
-		super(server);
 		this.server = server;
 		server.setServerConnection(this);
 	}
@@ -166,11 +165,28 @@ public class NNTPServerConnection extends ServerConnection implements
 	public void sendCommand(String command) throws NNTPIOException,
 			UnexpectedResponseException {
 
-		try {
-			super.sendCommand(command);
-		} catch (Exception e1) {
-			throw new NNTPIOException("Could not send command due to "
-					+ e1.getMessage(), e1);
+		synchronized (socket) {
+
+			Debug.log(this.getClass(), command);
+
+			try {
+				socket.getOutputStream().write((command + "\r\n").getBytes());
+			} catch (IOException e) {
+				Debug.log(this.getClass(), "Error received, reconnecting");
+				Debug.log(this.getClass(), e);
+				connect();
+				try {
+					socket.getOutputStream().write(
+							(command + "\r\n").getBytes());
+				} catch (IOException e1) {
+					Debug.log(this.getClass(), "Could not send command due to "
+							+ e1.getMessage());
+					throw new NNTPIOException("Could not send command due to "
+							+ e1.getMessage(), e1);
+				}
+			}
+
+			setPossibleResponseAvailable(true);
 		}
 
 	}
@@ -804,11 +820,45 @@ public class NNTPServerConnection extends ServerConnection implements
 		return new int[] { 0, 0, 0 };
 	}
 
-	@Override
+	
 	public IMessageSource[] getMessageSource() throws NNTPIOException,
 			UnexpectedResponseException {
 
 		return getNewsgroups();
 
+	}
+
+	public boolean isConnected() {
+		if (socket == null)
+			return false;
+		try {
+			socket.getOutputStream().write(" ".getBytes());
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
+	}
+
+	public String getLastResponse() {
+		return lastResponse;
+	}
+
+	public void setLastResponse(String lastResponse) {
+		this.lastResponse = lastResponse;
+		
+	}
+
+	public void setPossibleResponseAvailable(boolean b) {
+		this.possibleResponseAvailable = b;
+		
+	}
+
+	public boolean isPossibleResponseAvailable() {
+		return possibleResponseAvailable;
+	}
+
+	public ICredentials getCredentials() {
+		return this.credentials;
+		
 	}
 }
