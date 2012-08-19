@@ -86,7 +86,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 
 		address = new Text(composite, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		address.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		address.setText("news.eclipse.org");
+		address.setText("nntp://news.eclipse.org");
 
 		Label label2 = new Label(composite, SWT.NONE);
 		label2.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false,
@@ -221,6 +221,8 @@ public class NewNewsServerWizardPage extends WizardPage {
 		final String v_address = getAddress();
 		final int v_port = getPort();
 		final boolean v_secure = isSecure();
+		
+		final String trimmedAddress = v_address.split("/")[2];
 
 		BusyIndicator.showWhile(null, new Runnable() {
 
@@ -232,23 +234,23 @@ public class NewNewsServerWizardPage extends WizardPage {
 
 					public void run() {
 						setErrorMessage(null);
-						//if (v_address.split(":")[0].contains("nntp")) {
-							try {
+						 if (v_address.split(":")[0].contains("nntp")) {
+						try {
 
-								INNTPServer server = NNTPServerFactory
-										.getCreateServer(v_address, v_port,
-												credentials, v_secure);
-								INNTPServerConnection connection = ((INNTPServer)server)
-										.getServerConnection();
-								connection.disconnect();
-								connection.connect();
-								connection.setModeReader(server);
-								connection.getOverviewHeaders(server);
-							} catch (NNTPException e) {
-								message.append(e.getMessage());
-								Debug.log(getClass(), e);
-							}
-						//}
+							INNTPServer server = NNTPServerFactory
+									.getCreateServer(trimmedAddress, v_port,
+											credentials, v_secure);
+							INNTPServerConnection connection = ((INNTPServer) server)
+									.getServerConnection();
+							connection.disconnect();
+							connection.connect();
+							connection.setModeReader(server);
+							connection.getOverviewHeaders(server);
+						} catch (NNTPException e) {
+							message.append(e.getMessage());
+							Debug.log(getClass(), e);
+						}
+						 }
 
 					}
 				};
@@ -324,7 +326,7 @@ public class NewNewsServerWizardPage extends WizardPage {
 	public IServer getServer() throws NNTPException {
 		AbstractCredentials credentials = new AbstractCredentials(getUser(),
 				getEmail(), getLogin(), getPass());
-		IServer server = ServerFactory.getCreateServer(getAddress(), getPort(),
+		IServer server = ServerFactory.getCreateServer(getAddress().split("/")[2], getPort(),
 				credentials, isSecure());
 
 		return server;

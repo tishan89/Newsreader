@@ -90,16 +90,10 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		try {
 			targetID = IDFactory.getDefault()
 					.createID(container.getConnectNamespace(),
-							page1.getServer().getURL());
-
-			// ConnectContextFactory.createPasswordConnectContext(page1.getPass());
-
+							page1.getAddress()+":"+page1.getPort());							
 			container.connect(targetID, tContext);
 
 		} catch (IDCreateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NNTPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ContainerConnectException e) {
@@ -142,7 +136,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 		if (salvoUtil == null) {
 			setupSalvoUtil();
 		}
-		// if (page1.getAddress().split(":")[0].contains("nntp")) {
+		 if (page1.getAddress().split(":")[0].contains("nntp")) {
 		if (container == null) {
 			try {
 				container = ContainerFactory.getDefault().createContainer(
@@ -166,7 +160,7 @@ public class NewNewsServerWizard extends Wizard implements INewWizard {
 
 		IContainer con = salvoUtil.getContainerManager().getAllContainers()[0];
 
-		// }
+		 }
 		adaptor = (IChannelContainerAdapter) container
 				.getAdapter(IChannelContainerAdapter.class);
 		this.server = adaptor.getServer();
