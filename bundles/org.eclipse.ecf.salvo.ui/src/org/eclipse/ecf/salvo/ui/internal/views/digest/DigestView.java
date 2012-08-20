@@ -79,7 +79,7 @@ public class DigestView extends ViewPart implements IArticleEventListner,
 		context = Activator.getDefault().getBundle().getBundleContext();
 		context.addServiceListener(this); // listening to store
 											// register/unregister
-
+		//TODO Changes needed for the store
 		for (INNTPStore store : NNTPServerStoreFactory.instance()
 				.getServerStoreFacade().getStores()) {
 			store.addListener(this, SALVO.EVENT_SUBSCRIBE_UNSUBSCRIBE);

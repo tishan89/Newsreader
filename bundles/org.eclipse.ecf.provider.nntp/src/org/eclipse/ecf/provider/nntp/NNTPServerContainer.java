@@ -1,13 +1,21 @@
+/*******************************************************************************
+ *  Copyright (c) 2012 University of Moratuwa
+ *                                                                      
+ * All rights reserved. This program and the accompanying materials     
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at             
+ * http://www.eclipse.org/legal/epl-v10.html                            
+ *                                                                      
+ * Contributors:
+ * 	  Wim Jongman                                                    
+ *    Tishan Dahanayakage 
+ *******************************************************************************/
 package org.eclipse.ecf.provider.nntp;
 
-import java.nio.channels.InterruptibleChannel;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.eclipse.ecf.core.AbstractContainer;
-import org.eclipse.ecf.core.BaseContainer;
 import org.eclipse.ecf.core.ContainerConnectException;
-import org.eclipse.ecf.core.ContainerCreateException;
 import org.eclipse.ecf.core.events.ContainerConnectedEvent;
 import org.eclipse.ecf.core.events.ContainerConnectingEvent;
 import org.eclipse.ecf.core.events.ContainerDisconnectedEvent;
@@ -31,14 +39,11 @@ import org.eclipse.ecf.provider.nntp.internal.NNTPNameSpace;
 import org.eclipse.ecf.channel.IChannelContainerAdapter;
 import org.eclipse.ecf.channel.ITransactionContext;
 import org.eclipse.ecf.channel.core.Debug;
-import org.eclipse.ecf.channel.core.internal.MessageSource;
 import org.eclipse.ecf.channel.model.AbstractCredentials;
 import org.eclipse.ecf.channel.model.IMessage;
 import org.eclipse.ecf.channel.model.IMessageSource;
 import org.eclipse.ecf.channel.model.IServer;
 import org.eclipse.ecf.channel.provider.IMessageSourceProvider;
-
-//import org.eclipse.jface.dialogs.MessageDialog;
 
 public class NNTPServerContainer extends AbstractContainer implements
 		IChannelContainerAdapter {
@@ -46,8 +51,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 	private ID targetID;
 	private ID containerID;
 	private INNTPServer server;
-	private IConnectContext context;
-	private INNTPServerStoreFacade serverStoreFacade;
+	private IConnectContext context;	
 	private ArrayList<INewsgroup> subscribedNewsGroups;
 
 	protected NNTPServerContainer(ID id) {
@@ -66,15 +70,13 @@ public class NNTPServerContainer extends AbstractContainer implements
 			throw new ContainerConnectException(
 					"targetID not of appropriate Namespace");
 
-		fireContainerEvent(new ContainerConnectingEvent(getID(), targetID));
-		// (ITransactionContext)connectContext
-		serverStoreFacade = NNTPServerStoreFactory.instance()
-				.getServerStoreFacade();
+		fireContainerEvent(new ContainerConnectingEvent(getID(), targetID));	
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
 		try {
 			serverStoreFacade.subscribeServer(this.getServer(),
 					((ITransactionContext) connectContext).get("pWord"));
-		} catch (StoreException e) {
-			// TODO Auto-generated catch block
+		} catch (StoreException e) {			
 			e.printStackTrace();
 		}
 
@@ -84,11 +86,8 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 	public void disconnect() {
 		fireContainerEvent(new ContainerDisconnectingEvent(getID(), targetID));
-
 		final ID oldID = targetID;
-
 		// XXX disconnect here
-
 		fireContainerEvent(new ContainerDisconnectedEvent(getID(), oldID));
 	}
 
@@ -115,51 +114,31 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 	public INNTPServer getServer() {
 		return server;
-	}
+	}	
 
-	public IMessage[] fetchMessages(ITransactionContext context) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void reply(IMessage message, ITransactionContext context)
+			throws NNTPIOException, UnexpectedResponseException, StoreException {
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
+		serverStoreFacade.replyToArticle(context.get("subject"),
+				(IArticle) message, context.get("body"));
 
-	public IMessage fetchMessage(IMessageSource source, String Id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void reply(IMessage message, ITransactionContext context) throws NNTPIOException, UnexpectedResponseException, StoreException {
-		
-			serverStoreFacade.replyToArticle(context.get("subject"), (IArticle)message, context.get("body"));
-		
-
-	}
-
-	
-
-	public IMessageSource[] listMessageSources(INNTPServer server)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void delete(ITransactionContext context, String messageId)
-			throws Exception {
-		// TODO Auto-generated method stub
-
-	}
+	}	
 
 	public void connectToMessageSource(IMessageSource[] sources)
 			throws NNTPException {
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
 		INewsgroup[] newsgroup = (INewsgroup[]) sources;
 		for (INewsgroup group : newsgroup) {
 			serverStoreFacade.subscribeNewsgroup(group);
-
 		}
-
 	}
 
 	public void connectToMessageSource(Collection<IMessageSource> collection)
 			throws NNTPException {
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
 		ArrayList<INewsgroup> newsgroups = new ArrayList<INewsgroup>();
 		for (IMessageSource source : collection) {
 			newsgroups.add((INewsgroup) source);
@@ -170,11 +149,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 
 		}
 	}
-
-	public IMessageSource[] listMessageSources(IServer server) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	public ArrayList<IMessageSource> fetchSubcribedMessageSources() {
 		subscribedNewsGroups = new ArrayList<INewsgroup>();
@@ -197,7 +172,7 @@ public class NNTPServerContainer extends AbstractContainer implements
 		} catch (NNTPException e) {
 			Debug.log(this.getClass(), e);
 		}
-		
+
 		ArrayList<IMessageSource> result = new ArrayList<IMessageSource>();
 		for (INewsgroup group : subscribedNewsGroups) {
 			result.add((IMessageSource) group);
@@ -206,45 +181,69 @@ public class NNTPServerContainer extends AbstractContainer implements
 	}
 
 	public IMessageSourceProvider[] getProviders() {
-		return HookedNewsgroupProvider.instance()
-				.getProviders();
-		
+		return HookedNewsgroupProvider.instance().getProviders();
+
 	}
 
 	public IMessageSource getMessageSource(IMessageSourceProvider provider) {
-		
-		return HookedNewsgroupProvider.instance()
-				.getNewsgroup(provider);
+
+		return HookedNewsgroupProvider.instance().getNewsgroup(provider);
 	}
 
-	public void postNewMessages(IMessageSource[] source, IMessage message, ITransactionContext context) throws Exception {
-		/*INewsgroup[] result = null;
-		int i=0;
-		for (IMessageSource source : message) {
-			result[i]=(INewsgroup)source;
-			
-		}*/
-		serverStoreFacade.postNewArticle((INewsgroup[])source,
+	public void postNewMessages(IMessageSource[] source, IMessage message,
+			ITransactionContext context) throws Exception {
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
+
+		serverStoreFacade.postNewArticle((INewsgroup[]) source,
 				context.get("subject"), context.get("body                 "));
-		
+
 	}
 
-	public void subscribeMessageSource(IMessageSource group) throws NNTPIOException, UnexpectedResponseException, StoreException {
-		serverStoreFacade.subscribeNewsgroup((INewsgroup)group);
-		
+	public void subscribeMessageSource(IMessageSource group)
+			throws NNTPIOException, UnexpectedResponseException, StoreException {
+		INNTPServerStoreFacade serverStoreFacade = NNTPServerStoreFactory
+				.instance().getServerStoreFacade();
+		serverStoreFacade.subscribeNewsgroup((INewsgroup) group);
+
 	}
 
-	public IMessage[] fetchFollowups(IMessage message) throws NNTPIOException, UnexpectedResponseException, StoreException {
-		
-		return NNTPServerStoreFactory.instance()
-				.getServerStoreFacade().getAllFollowUps((IArticle)message);
+	public IMessage[] fetchFollowups(IMessage message) throws NNTPIOException,
+			UnexpectedResponseException, StoreException {
+
+		return NNTPServerStoreFactory.instance().getServerStoreFacade()
+				.getAllFollowUps((IArticle) message);
 	}
 
 	public void updateMessage(IMessage message, ITransactionContext context)
 			throws Exception {
 		NNTPServerStoreFactory.instance().getServerStoreFacade()
-		.updateArticle((IArticle) message);
-		
+				.updateArticle((IArticle) message);
+
+	}
+	public IMessage fetchMessage(IMessageSource source, String Id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public IMessage[] fetchMessages(ITransactionContext context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public IMessageSource[] listMessageSources(INNTPServer server)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public void delete(ITransactionContext context, String messageId)
+			throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+	public IMessageSource[] listMessageSources(IServer server) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
